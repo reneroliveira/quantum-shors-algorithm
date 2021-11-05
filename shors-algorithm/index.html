@@ -102,8 +102,9 @@
             <div class="section">
               
                 <h1 id="shors-algorithm">Shor's Algorithm</h1>
-<p>Description of the algorithm, mathematical statements and proofs.</p>
-<pre><code class="language-python"># test
+<p>Description of the algorithm, mathematical statements and proofs. <span class="arithmatex">\(\dfrac{\pi}{2}\)</span></p>
+<pre><code class="language-python">import markdown
+md = markdown.Markdown(extensions=['pymdownx.arithmatex'])
 </code></pre>
               
             </div>
@@ -151,6 +152,9 @@
     <script>var base_url = '..';</script>
     <script src="../js/theme_extra.js" defer></script>
     <script src="../js/theme.js" defer></script>
+      <script src="../javascripts/mathjax.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
       <script src="../search/main.js" defer></script>
     <script defer>
         window.onload = function () {
