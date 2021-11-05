@@ -1,0 +1,9 @@
+site_name: Shor's Algorithm
+nav:
+- Home: index.md
+- Shor's Algorithm: shors-algorithm.md
+- Introduction to Quantum Computing: intro-quantum.md
+- Quantum Fourier Transform: qft-qpe.md
+- Quantum Shor's Algorithm: quantum-shors.md
+
+theme: readthedocs
