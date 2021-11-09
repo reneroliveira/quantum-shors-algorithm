@@ -1,4 +1,4 @@
-site_name: Shor's Algorithm
+site_name: Shor's Algorithm and Quantum Computing
 nav:
 - Home: index.md
 - Shor's Algorithm: shors-algorithm.md
@@ -6,7 +6,7 @@ nav:
 - Quantum Fourier Transform: qft-qpe.md
 - Quantum Shor's Algorithm: quantum-shors.md
 
-theme: readthedocs
+theme: material
 
 markdown_extensions:
   - pymdownx.arithmatex:
