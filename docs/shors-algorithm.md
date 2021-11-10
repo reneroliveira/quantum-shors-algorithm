@@ -1,6 +1,6 @@
 # Shor's Algorithm
 
-Description of the algorithm, mathematical statements and proofs. $\dfrac{\pi}{2}$
+<!-- Description of the algorithm, mathematical statements and proofs. -->
 
 
 ```python
