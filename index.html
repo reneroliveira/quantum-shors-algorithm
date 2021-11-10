@@ -61,7 +61,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#shors-algorithm-and-quantum-computing" class="md-skip">
+        <a href="#breaking-rsa-encryption" class="md-skip">
           Skip to content
         </a>
       
@@ -93,7 +93,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              1 - Introduction
             
           </span>
         </div>
@@ -190,12 +190,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Home
+          1 - Introduction
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="." class="md-nav__link md-nav__link--active">
-        Home
+        1 - Introduction
       </a>
       
         
@@ -222,8 +222,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#project-layout" class="md-nav__link">
-    Project layout
+  <a href="#project-structure" class="md-nav__link">
+    Project Structure
   </a>
   
 </li>
@@ -245,7 +245,7 @@
   
     <li class="md-nav__item">
       <a href="shors-algorithm/" class="md-nav__link">
-        Shor's Algorithm
+        2 - Shor's Algorithm
       </a>
     </li>
   
@@ -260,7 +260,7 @@
   
     <li class="md-nav__item">
       <a href="intro-quantum/" class="md-nav__link">
-        Introduction to Quantum Computing
+        3 - Quantum Computing Preliminaries
       </a>
     </li>
   
@@ -275,7 +275,7 @@
   
     <li class="md-nav__item">
       <a href="qft/" class="md-nav__link">
-        Quantum Fourier Transform
+        4 - Quantum Fourier Transform
       </a>
     </li>
   
@@ -290,7 +290,37 @@
   
     <li class="md-nav__item">
       <a href="quantum-shors/" class="md-nav__link">
-        Quantum Shor's Algorithm
+        5 - Quantum Shor's Algorithm
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="further/" class="md-nav__link">
+        6 - Further reading
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="bib/" class="md-nav__link">
+        7 - References
       </a>
     </li>
   
@@ -331,8 +361,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#project-layout" class="md-nav__link">
-    Project layout
+  <a href="#project-structure" class="md-nav__link">
+    Project Structure
   </a>
   
 </li>
@@ -350,22 +380,24 @@
               
                 
                 
-                <h1 id="shors-algorithm-and-quantum-computing">Shor's Algorithm and Quantum Computing</h1>
-<p>The security of RSA encryption as we briefly descrive below, is based on the computational dificultty to factor large numbers. The best known algorithm, <a href="https://en.wikipedia.org/wiki/General_number_field_sieve">General Number Field Sieve</a> perform this task in sub-exponential time <span class="arithmatex">\(O\left(e^{1.9(\log N)^{1/3}(\log\log N)^{2/3}}\right)\)</span>, where <span class="arithmatex">\(N\)</span> is the number being factored, (then <span class="arithmatex">\(\log N\)</span> would be the order of the number of input bits)</p>
-<p>In 1994, <a href="http://www-math.mit.edu/~shor/">Peter Shor</a> came up with a Las Vegas algorithm for prime factorization and discrete logarithms, that take advantage of quantum computation to achieve a polynomial complexity in the number of bits, which is <span class="arithmatex">\(O\left((\log N)^2(\log\log N)(\log \log\log N)\right)\)</span>.</p>
+                <h1 id="breaking-rsa-encryption">Breaking RSA Encryption</h1>
+<p>The security of RSA encryption, as briefly described below, is based on the computational difficulty of factoring large numbers. The best-known algorithm, <a href="https://en.wikipedia.org/wiki/General_number_field_sieve">General Number Field Sieve</a> performs this task in sub-exponential time <span class="arithmatex">\(O\left(e^{1.9(\log N)^{1/3}(\log\log N)^{2/3}}\right)\)</span>, where <span class="arithmatex">\(N\)</span> is the number being factored (then <span class="arithmatex">\(\log N\)</span> would be the order of the number of input bits)</p>
+<p>In 1994, <a href="http://www-math.mit.edu/~shor/">Peter Shor</a> came up with a Las Vegas algorithm for prime factorization and discrete logarithms that take advantage of quantum computation to achieve a polynomial complexity in the number of bits, which is <span class="arithmatex">\(O\left((\log N)^2(\log\log N)(\log \log\log N)\right)\)</span>.</p>
 <h2 id="rsa-preliminaries">RSA Preliminaries</h2>
-<ul>
-<li><code>mkdocs new [dir-name]</code> - Create a new project.</li>
-<li><code>mkdocs serve</code> - Start the live-reloading docs server.</li>
-<li><code>mkdocs build</code> - Build the documentation site.</li>
-<li><code>mkdocs -h</code> - Print help message and exit.</li>
-</ul>
-<h2 id="project-layout">Project layout</h2>
-<pre><code>mkdocs.yml    # The configuration file.
-docs/
-    index.md  # The documentation homepage.
-    ...       # Other markdown pages, images and other files.
-</code></pre>
+<p>Suppose Alice wants to send a message <span class="arithmatex">\(a\)</span> to Bob (as an ASCII integer). Bob picks two prime numbers (preferably large) <span class="arithmatex">\(p\)</span> and <span class="arithmatex">\(q\)</span> and multiplies them to get <span class="arithmatex">\(N=pq\)</span>. Also, he chooses a large number <span class="arithmatex">\(c\)</span>, coprime with <span class="arithmatex">\((p-1)(q-1)\)</span>. After that, he shares with Alice the public keys <span class="arithmatex">\((N,c)\)</span>.</p>
+<p>Alice uses the keys received from Bob to encrypt the message, calculating <span class="arithmatex">\(b\equiv a^c~(mod ~N)\)</span>, and sends it to Bob. Since he knows <span class="arithmatex">\(p\)</span> and <span class="arithmatex">\(q\)</span>, she can compute <span class="arithmatex">\(d\)</span> (private key) such that <span class="arithmatex">\(cd\equiv1 ~(mod~ (p-1)(q-1))\)</span> thought Bézout coefficients of <a href="https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm">Extended Euclidean algorithm</a>, then he can decrypt the message <span class="arithmatex">\(b\)</span>, through <span class="arithmatex">\(b^d~(mod~N)\)</span>. This works because <span class="arithmatex">\(a^{(p-1)(q-1)}\equiv 1 ~(mod~N)\)</span>, and since <span class="arithmatex">\(cd\)</span> can be written as <span class="arithmatex">\(1+k(p-1)(q-1)\)</span> for some <span class="arithmatex">\(k\in\mathbb{Z}\)</span>, we get:</p>
+<div class="arithmatex">\[\begin{align*}
+&amp;b^d~(mod~N)\\
+\equiv&amp;~a^{cd}~(mod~N)\\
+\equiv&amp;~a^{1+k(p-1)(q-1)}~(mod~N)\\
+\equiv&amp;~a~(mod~N)
+\end{align*}\]</div>
+<p>This is just a summary, for a deeper explanation of the group theory involved in this encryption, you can check sections 3.2 and 3.3 of <a href="bib/">(Mermin, 2007)</a>. But now, we understand the "vulnerability" of RSA. If a hacker gets <span class="arithmatex">\(p\)</span> and <span class="arithmatex">\(q\)</span> just knowing its product <span class="arithmatex">\(N\)</span>, he could effortlessly generate the private key <span class="arithmatex">\(d\)</span> and decrypt the message. That's why in practical applications, <span class="arithmatex">\(p\)</span> and <span class="arithmatex">\(q\)</span> are huge numbers with hundreds of digits of length.</p>
+<h2 id="project-structure">Project Structure</h2>
+<p><a href="shors-algorithm/">Section 2</a> describes Shor's Algorithm and the number theory behind it. It relies on finding the period <span class="arithmatex">\(r\)</span> of a discrete periodic function, in that case <span class="arithmatex">\(f(x)=a^x~(mod~N)\)</span>. That's the key part of the algorithm which can be done efficiently on a quantum computer, using the Quantum Fourier Transform (QFT), presented in <a href="qft/">Section 4</a>.</p>
+<p><a href="intro-quantum/">Section 3</a> gives a basic background in quantum computing concepts, and how to implement quantum circuits using <a href="https://qiskit.org/">Qiskit library</a>, for then you jump into the QFT section.</p>
+<p>Finally, <a href="quantum-shors/">Section 5</a> shows a practical example of factoring using a quantum computer. We use <span class="arithmatex">\(15\)</span> for the experiment and explain the caveats for factoring higher order numbers.</p>
+<p><a href="further/">Section 6</a> is a selection of excellent materials available on the internet regarding quantum computing and cryptography. And <a href="bib/">Section 7</a> contains the bibliographical references.</p>
                 
               
               
@@ -386,13 +418,13 @@ docs/
       
       
         
-        <a href="shors-algorithm/" class="md-footer__link md-footer__link--next" aria-label="Next: Shor&#39;s Algorithm" rel="next">
+        <a href="shors-algorithm/" class="md-footer__link md-footer__link--next" aria-label="Next: 2 - Shor&#39;s Algorithm" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Shor's Algorithm
+              2 - Shor's Algorithm
             </div>
           </div>
           <div class="md-footer__button md-icon">
