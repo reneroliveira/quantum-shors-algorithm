@@ -325,6 +325,27 @@
 <pre><code class="language-python">import markdown
 md = markdown.Markdown(extensions=['pymdownx.arithmatex'])
 </code></pre>
+<h1 id="pseudocode">Pseudocode</h1>
+<p>Getting straigth to the point, here's how Shor's algorithm works to factor a prime product <span class="arithmatex">\(N=pq\)</span>:</p>
+<ol>
+<li>
+<p>Pick a random integer <span class="arithmatex">\(a\)</span> between <span class="arithmatex">\(0\)</span> and <span class="arithmatex">\(N-1\)</span>;</p>
+</li>
+<li>
+<p>Find the smallest <span class="arithmatex">\(r\)</span> such that <span class="arithmatex">\(a^r\equiv 1 ~(mod ~N)\)</span>, i.e the period of the function <span class="arithmatex">\(f(x)=a^x~(mod~N)\)</span>;</p>
+</li>
+<li>
+<p>If r is odd, get back to step 1</p>
+</li>
+<li>
+<p>If <span class="arithmatex">\(a^{r/2}+1\equiv 0~(mod~N)\)</span>, get back to step 1.</p>
+</li>
+<li>
+<p>Then <span class="arithmatex">\(\{p,q\}=\{\gcd(a^{r/2}-1,N),\gcd(a^{r/2}+1,N)\}\)</span>.</p>
+</li>
+</ol>
+<pre><code class="language-python">
+</code></pre>
                 
               
               
