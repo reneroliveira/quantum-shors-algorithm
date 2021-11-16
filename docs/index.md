@@ -1,6 +1,6 @@
 # Breaking RSA Encryption
 
-The security of RSA encryption, as briefly described below, is based on the computational difficulty of factoring large numbers. The best-known algorithm, [General Number Field Sieve](https://en.wikipedia.org/wiki/General_number_field_sieve) performs this task in sub-exponential time $O\left(e^{1.9(\log N)^{1/3}(\log\log N)^{2/3}}\right)$, where $N$ is the number being factored (then $\log N$ would be the order of the number of input bits)
+The security of RSA encryption, as briefly described below, is based on the computational difficulty of factoring large numbers. The best-known algorithm, General Number Field Sieve by [(Lenstra et al., 1990a)](bib.md) performs this task in sub-exponential time $O\left(e^{1.9(\log N)^{1/3}(\log\log N)^{2/3}}\right)$, where $N$ is the number being factored (then $\log N$ would be the order of the number of input bits)
 
 In 1994, [Peter Shor](http://www-math.mit.edu/~shor/) came up with a Las Vegas algorithm for prime factorization and discrete logarithms that take advantage of quantum computation to achieve a polynomial complexity in the number of bits, which is $O\left((\log N)^2(\log\log N)(\log \log\log N)\right)$.
 
