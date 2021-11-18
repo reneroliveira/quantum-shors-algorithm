@@ -1,3 +1,3 @@
 # Quantum Shor's Algorithm 
 
-![](../images/shor_circuit.png)
+![](images/shor_circuit.png)

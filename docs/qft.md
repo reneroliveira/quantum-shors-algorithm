@@ -2,19 +2,19 @@
 
 $$QFT_N \vert x \rangle =  \frac{1}{\sqrt{N}} \sum_{y=0}^{N-1} e^{2 \pi i xy / 2^n} \vert y \rangle$$
 
-![](../images/qft.png)
+![](images/qft.png)
 
 
 ```python
 import numpy as np
 from numpy import pi
+warnings.filterwarnings("ignore")
 # importing Qiskit
 from qiskit import QuantumCircuit, transpile, assemble, Aer, IBMQ
 from qiskit.providers.ibmq import least_busy
 from qiskit.tools.monitor import job_monitor
 from qiskit.visualization import plot_histogram, plot_bloch_multivector
 import warnings
-warnings.filterwarnings("ignore")
 ```
 
 
