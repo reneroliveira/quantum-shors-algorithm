@@ -204,9 +204,55 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          2 - Shor's Algorithm
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         2 - Shor's Algorithm
       </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pseudocode" class="md-nav__link">
+    Pseudocode
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-does-it-works" class="md-nav__link">
+    Why does it works?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#probability-of-success" class="md-nav__link">
+    Probability of Success
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -308,6 +354,35 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pseudocode" class="md-nav__link">
+    Pseudocode
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-does-it-works" class="md-nav__link">
+    Why does it works?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#probability-of-success" class="md-nav__link">
+    Probability of Success
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -325,8 +400,8 @@
 <pre><code class="language-python">import markdown
 md = markdown.Markdown(extensions=['pymdownx.arithmatex'])
 </code></pre>
-<h1 id="pseudocode">Pseudocode</h1>
-<p>Getting straigth to the point, here's how Shor's algorithm works to factor a prime product <span class="arithmatex">\(N=pq\)</span>:</p>
+<h2 id="pseudocode">Pseudocode</h2>
+<p>Getting straight to the point, here's how Shor's algorithm works to factor a prime product <span class="arithmatex">\(N=pq\)</span>:</p>
 <ol>
 <li>
 <p>Pick a random integer <span class="arithmatex">\(a\)</span> between <span class="arithmatex">\(0\)</span> and <span class="arithmatex">\(N-1\)</span>;</p>
@@ -344,8 +419,21 @@ md = markdown.Markdown(extensions=['pymdownx.arithmatex'])
 <p>Then <span class="arithmatex">\(\{p,q\}=\{\gcd(a^{r/2}-1,N),\gcd(a^{r/2}+1,N)\}\)</span>.</p>
 </li>
 </ol>
-<pre><code class="language-python">
-</code></pre>
+<h2 id="why-does-it-works">Why does it works?</h2>
+<p>Let <span class="arithmatex">\(G_N\)</span> be the set of all positive integers less than N, that are coprimes with N. One can show that this is a group under modulo-<span class="arithmatex">\(N\)</span> multiplication.</p>
+<p>Step 1 chooses a random <span class="arithmatex">\(a\in \mathbb{Z}_N\)</span>, if we are lucky to choose an <span class="arithmatex">\(a\)</span> which share factors with <span class="arithmatex">\(N\)</span>, we just use Euclidean Algorithm for <span class="arithmatex">\(\gcd(N,a)\)</span> and finish the factoring process.</p>
+<p>But in most cases we'll choose a number in <span class="arithmatex">\(G_N\)</span>. Step 2 finds the order <span class="arithmatex">\(r\)</span> of <span class="arithmatex">\(a\)</span> in <span class="arithmatex">\(G_N\)</span>.</p>
+<p>Then, we calculate <span class="arithmatex">\(x=a^{r/2}~(mod~N)\)</span> (step 3 garantees <span class="arithmatex">\(r\)</span> is even), and open up the expression:</p>
+<div class="arithmatex">\[\begin{align*}
+    (x-1)(x+1)&amp;\equiv x^2-1~(mod ~N)\\
+    &amp;\equiv a^r-1~(mod ~N)\\
+    &amp;\equiv 0 ~(mod ~N),\\
+\end{align*}\]</div>
+<p>since <span class="arithmatex">\(a^r\equiv1~(mod~N)\)</span></p>
+<p>Note that <span class="arithmatex">\(x-1\not\equiv 0 ~(mod ~N)\)</span>, because <span class="arithmatex">\(r\)</span> is the smallest number s.t. <span class="arithmatex">\(a^r-1\equiv0~(mod~N)\)</span>, so <span class="arithmatex">\(a^{r/2}-1\)</span> does not satisfy the equivalence. Step 4, also garantees <span class="arithmatex">\(x+1\not\equiv0~(mod~N)\)</span>.</p>
+<p>So, we have that neither <span class="arithmatex">\(x-1\)</span> nor <span class="arithmatex">\(x+1\)</span> is divisible by <span class="arithmatex">\(N=pq\)</span>, but their product <span class="arithmatex">\((x-1)(x+1)\)</span> is. Since <span class="arithmatex">\(N\)</span> has just two prime factors, <span class="arithmatex">\(p\)</span> must divide <span class="arithmatex">\(x-1\)</span> or <span class="arithmatex">\(x+1\)</span> and <span class="arithmatex">\(q\)</span> the other term.</p>
+<h2 id="probability-of-success">Probability of Success</h2>
+<p>Shor's Algorithm counts on the luck of finding an <span class="arithmatex">\(a\)</span> which goes through steps 3 and 4 without restarting the process. But we don't need to try it out many times because the probability of a random number <span class="arithmatex">\(a\in G_N\)</span> have order <span class="arithmatex">\(r\)</span> which is even and satisfy <span class="arithmatex">\(a^{r/2}+1\not\equiv~(mod~N)\)</span>, is at least <span class="arithmatex">\(50\%\)</span>!</p>
                 
               
               
