@@ -46,4 +46,4 @@ So, we have that neither $x-1$ nor $x+1$ is divisible by $N=pq$, but their produ
 
 ## Probability of Success
 
-Shor's Algorithm counts on the luck of finding an $a$ which goes through steps 3 and 4 without restarting the process. But we don't need to try it out many times because the probability of a random number $a\in G_N$ have order $r$ which is even and satisfy $a^{r/2}+1\not\equiv~(mod~N)$, is at least $50\%$!
+Shor's Algorithm counts on the luck of finding an $a$ which goes through steps 3 and 4 without restarting the process. But we don't need to try it out many times because the probability of a random number $a\in G_N$ have order $r$ which is even and satisfy $a^{r/2}+1\not\equiv0~(mod~N)$, is at least $50\%$!
