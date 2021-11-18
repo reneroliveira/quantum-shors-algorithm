@@ -1,5 +1,9 @@
 # Quantum Fourier Transform
 
+$$QFT_N \vert x \rangle =  \frac{1}{\sqrt{N}} \sum_{y=0}^{N-1} e^{2 \pi i xy / 2^n} \vert y \rangle$$
+
+![](../images/qft.png)
+
 
 ```python
 import numpy as np
