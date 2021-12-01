@@ -234,9 +234,41 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          4 - Quantum Fourier Transform
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         4 - Quantum Fourier Transform
       </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -308,6 +340,21 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -320,7 +367,33 @@
                 
                 
                 <h1 id="quantum-fourier-transform">Quantum Fourier Transform</h1>
-<div class="arithmatex">\[QFT_N \vert x \rangle =  \frac{1}{\sqrt{N}} \sum_{y=0}^{N-1} e^{2 \pi i xy / 2^n} \vert y \rangle\]</div>
+<p>The Quantum Fourier Transform is just a change of basis, from the computational basis to Fourier one. It takes a quantum state <span class="arithmatex">\(\vert x \rangle = \vert x_1\ldots x_n \rangle\)</span> and maps it to:</p>
+<div class="arithmatex">\[\underbrace{\vert \tilde x\rangle}_{\text{Fourier basis}}=QFT_N \vert x \rangle =  \dfrac{1}{\sqrt{N}} \sum_{y=0}^{N-1} e^{2 \pi i xy / N} \vert y \rangle\]</div>
+<p>Where <span class="arithmatex">\(N=2^n\)</span> (<span class="arithmatex">\(n\)</span> = number of qubits) and <span class="arithmatex">\(\vert y\rangle\)</span> is representing its respective binary quantum state <span class="arithmatex">\(\vert y_1y_2\ldots y_n\rangle\)</span>, with <span class="arithmatex">\(y_i\in\{0,1\}\)</span>.</p>
+<h2 id="examples">Examples</h2>
+<p>Let's begin with the 1-qubit case, where <span class="arithmatex">\(N=2^1\)</span>:</p>
+<div class="arithmatex">\[\begin{align*}
+\vert \tilde 0 \rangle&amp;=\dfrac{1}{\sqrt2}\displaystyle\sum_{y=0}^{1}e^{2\pi i (0)y/2}\vert y\rangle\\
+&amp;=\dfrac{1}{\sqrt2}\displaystyle\sum_{y=0}^{1}\vert y\rangle\\
+&amp;=\dfrac{1}{\sqrt2}(\vert 0\rangle + \vert 1\rangle)\\
+&amp;=\vert + \rangle
+\end{align*}\]</div>
+<div class="arithmatex">\[\begin{align*}
+\vert \tilde 1 \rangle&amp;=\dfrac{1}{\sqrt2}\displaystyle\sum_{y=0}^{1}e^{2\pi i (1)y/2}\vert y\rangle\\
+&amp;=\dfrac{1}{\sqrt2}\left(e^{2\pi i(0)/2}\vert 0\rangle+e^{2\pi i(1)/2}\vert 1\rangle\right)\\
+&amp;=\dfrac{1}{\sqrt2}(\vert 0\rangle + (-1)\vert 1\rangle)\\
+&amp;=\dfrac{1}{\sqrt2}(\vert 0\rangle -\vert 1\rangle\\
+&amp;=\vert - \rangle
+\end{align*}\]</div>
+<p>So states <span class="arithmatex">\(\vert0\rangle\)</span> and <span class="arithmatex">\(\vert1\rangle\)</span> are mapped to states <span class="arithmatex">\(\vert+\rangle\)</span> and <span class="arithmatex">\(\vert-\rangle\)</span> respectively. That's what Hadamard gate does! Geometrically, this transformation brings the z-axis poles states to the x-axis poles in the Bloch sphere.</p>
+<p><a href="../further/">Qiskit Textbook</a> have a nice animation which helps build intuition of what QFT does in the general case. A four-qubit state <span class="arithmatex">\(\vert x\rangle = \vert x_1x_2x_3x_4\rangle\)</span> is stored using <span class="arithmatex">\(\vert0\rangle\)</span> and <span class="arithmatex">\(\vert1\rangle\)</span> in the computational basis. Observe that the leftmost qubit (<span class="arithmatex">\(x_4\)</span>) flips with with every number increment, the next (qubit 1, <span class="arithmatex">\(x_3\)</span>) flips with 2 number increments, qubit 2 (<span class="arithmatex">\(x_2\)</span>) flips after 4 turns, and so on.</p>
+<p><img alt="" src="../images/zbasis-counting.gif" /></p>
+<p>In the Fourier basis, all states are on the equatorial plane. The leftmost is rotated <span class="arithmatex">\(2\pi/16\)</span> radians by number increment, the next qubit (<span class="arithmatex">\(x_3\)</span>) rotates <span class="arithmatex">\(2\pi/8\)</span> per time, <span class="arithmatex">\(x_2\)</span> rotates <span class="arithmatex">\(2\pi/4\)</span> and <span class="arithmatex">\(x_1\)</span> with an angle of <span class="arithmatex">\(2\pi/2=\pi\)</span> radians. We are doubling the angle of rotation on each qubit.</p>
+<p><img alt="" src="../images/fourierbasis-counting.gif" /></p>
+<pre><code class="language-python">
+</code></pre>
+<pre><code class="language-python">
+</code></pre>
 <p><img alt="" src="../images/qft.png" /></p>
 <pre><code class="language-python">import numpy as np
 from numpy import pi
