@@ -69,6 +69,7 @@ Now, consider $N$ being power of an odd prime $N=p^{\alpha}$. The same argument 
 We're gonnna prove the general case where $N=p_1^{\alpha_1}p_2^{\alpha_2}\ldots p_m^{\alpha_m}$, as a consequence of the following theorem:
 
 > **Theorem 2 (Chinese Remainder Theorem):** Suppose $n_1,n_2,\ldots,n_k$ are positive integers pairwise coprimes. Then the system of equations:
+> 
 > \begin{align*}
 x &\equiv a_1~(mod~n_1)\\
 x &\equiv a_2~(mod~n_2)\\
@@ -88,7 +89,7 @@ The other case of failure is when $r$ is even and $a^{r/2}\equiv-1~(mod~N)$. If 
 
 As seen before, $r_1$ will be divisible by a power of $2$ (the largest dividing $\varphi(p_1^{\alpha_2}$) with probability $1/2$. Then the probability of each other $r_i$'s have it's $d_i$ agreeing with $d_1$ will be at most $1/2$ (considering the worst case scenario).
 
-Then $\mathbb{P}(r\text{ even and }a^{r/2}\equiv-1~(mod~N))\leq\dfrac1{2^m}$. And since $\mathbb{P}(r \text{ odd}=\dfrac1{2^m}$, then probability of failure is:
+Then $\mathbb{P}(r\text{ even and }a^{r/2}\equiv-1~(mod~N))\leq\dfrac1{2^m}$. And since $\mathbb{P}(r \text{ odd})=\dfrac1{2^m}$, then probability of failure is:
 
 $$\mathbb{P}(r\text{ odd or }a^{r/2}\equiv-1~(mod~N))\leq\dfrac1{2^m}+\dfrac{1}{2^m}=\dfrac{1}{2^{m-1}}$$
 
