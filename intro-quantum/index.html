@@ -514,18 +514,18 @@ H\vert1\rangle&amp;=\vert-\rangle=\dfrac{1}{\sqrt2}(\vert0\rangle-\vert1\rangle)
 <h2 id="qiskit-introduction">Qiskit Introduction</h2>
 <p><a href="qiskit.org">Qiskit</a> is a Python library that makes it esier to design and test quantum circuits and algorithms. You can follow the website instrutions to install it on your computer. We are going to create a basic circuit that applies Hadamard gate on <span class="arithmatex">\(\vert0\rangle\)</span>, take the measurements and collapses to state zero or one.</p>
 <p>At first, let's import the required libraries:</p>
-<pre><code class="language-python">import warnings
-warnings.filterwarnings(&quot;ignore&quot;,category=DeprecationWarning)
-from qiskit import QuantumCircuit, assemble, Aer
-from qiskit.visualization import plot_histogram
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">assemble</span><span class="p">,</span> <span class="n">Aer</span>
+<span class="kn">from</span> <span class="nn">qiskit.visualization</span> <span class="kn">import</span> <span class="n">plot_histogram</span>
+</code></pre></div>
 <p>Now lets build and display the circuit diagram:</p>
-<pre><code class="language-python">qc = QuantumCircuit(1) # Creates a single-qubit quantum circuit
-qc.initialize([1,0], 0)  # Define initial_state as |0&gt;
-qc.h(0) # Applid Hadamard Gate on 0th qubit (in this case, the only one)
-qc.measure_all() # Adds measurement to all qubits
-qc.draw()
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Creates a single-qubit quantum circuit</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">initialize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># Define initial_state as |0&gt;</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Applid Hadamard Gate on 0th qubit (in this case, the only one)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span> <span class="c1"># Adds measurement to all qubits</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</code></pre></div>
 <pre style="word-wrap: normal;white-space: pre;background: #fff0;line-height: 1.1;font-family: &quot;Courier New&quot;,Courier,monospace">        ┌─────────────────┐┌───┐ ░ ┌─┐
    q_0: ┤ Initialize(1,0) ├┤ H ├─░─┤M├
         └─────────────────┘└───┘ ░ └╥┘
@@ -533,17 +533,17 @@ meas: 1/════════════════════════
                                     0 </pre>
 
 <p>We're going to run this circuit in a quantum simulator, which does not require acess to an actual quantum device:</p>
-<pre><code class="language-python">sim = Aer.get_backend('qasm_simulator')  # Defines the simulator
-qobj = assemble(qc,shots=1000) # Run 1000 shots of the circuit
-result = sim.run(qobj).result() #Collect results
-counts = result.get_counts() # Count results for plotting
-plot_histogram(counts)
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="n">sim</span> <span class="o">=</span> <span class="n">Aer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;qasm_simulator&#39;</span><span class="p">)</span>  <span class="c1"># Defines the simulator</span>
+<span class="n">qobj</span> <span class="o">=</span> <span class="n">assemble</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span><span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span> <span class="c1"># Run 1000 shots of the circuit</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">qobj</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="c1">#Collect results</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span> <span class="c1"># Count results for plotting</span>
+<span class="n">plot_histogram</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
+</code></pre></div>
 <p><img alt="png" src="../intro-quantum_files/intro-quantum_10_0.png" /></p>
 <p>As expected, around half of the measurements collapses to <span class="arithmatex">\(\vert0\rangle\)</span> and the other half to <span class="arithmatex">\(\vert1\rangle\)</span>. The below table shows the library versions, if you want to reproduce the same environment used in this text.</p>
-<pre><code class="language-python">import qiskit.tools.jupyter
-%qiskit_version_table
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">qiskit.tools.jupyter</span>
+<span class="o">%</span><span class="n">qiskit_version_table</span>
+</code></pre></div>
 <h3>Version Information</h3>
 <table><tr><th>Qiskit Software</th><th>Version</th></tr><tr><td><code>qiskit-terra</code></td><td>0.18.3</td></tr><tr><td><code>qiskit-aer</code></td><td>0.6.1</td></tr><tr><td><code>qiskit-ignis</code></td><td>0.4.0</td></tr><tr><td><code>qiskit-ibmq-provider</code></td><td>0.8.0</td></tr><tr><td><code>qiskit-aqua</code></td><td>0.7.5</td></tr><tr><td><code>qiskit</code></td><td>0.32.0</td></tr><tr><th>System information</th></tr><tr><td>Python</td><td>3.8.5 (default, Sep  3 2020, 21:29:08) [MSC v.1916 64 bit (AMD64)]</td></tr><tr><td>OS</td><td>Windows</td></tr><tr><td>CPUs</td><td>2</td></tr><tr><td>Memory (Gb)</td><td>15.86971664428711</td></tr><tr><td colspan='2'>Wed Dec 01 21:24:13 2021 Hora oficial do Brasil</td></tr></table>
                 

@@ -438,7 +438,8 @@ QFT_N\vert x\rangle &amp; =  \dfrac{1}{\sqrt{N}} \displaystyle\sum_{y=0}^{N-1} e
 <h2 id="qft-circuit">QFT Circuit</h2>
 <p>We'll need two atomic elements for building a circuit that implements QFT: the already known Hadamard gate and the controlled rotation gate.</p>
 <p>We know that </p>
-<div class="arithmatex">\[H\vert0\rangle=\frac{1}{\sqrt2}(\vert0\rangle+\vert1\rangle)$$ and $$H\vert1\rangle=\frac{1}{\sqrt2}(\vert0\rangle-\vert1\rangle)\]</div>
+<div class="arithmatex">\[\begin{align*}H\vert0\rangle&amp;=\frac{1}{\sqrt2}(\vert0\rangle+\vert1\rangle)\text{ and }\\
+H\vert1\rangle&amp;=\frac{1}{\sqrt2}(\vert0\rangle-\vert1\rangle)\end{align*}\]</div>
 <p>We can also write Hadamard operation acting on <span class="arithmatex">\(x_k\in\{0,1\}\)</span> as:</p>
 <div class="arithmatex">\[H\vert x_k\rangle\dfrac{1}{\sqrt2}\left(\vert0\rangle+e^{2\pi i x_k/2}\vert1\rangle\right)\]</div>
 <p>The other element, controlled rotation acts on two-qubit states <span class="arithmatex">\(\vert x_ix_j\rangle\)</span> and is based on the following unitary operator:</p>

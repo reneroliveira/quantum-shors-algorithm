@@ -335,91 +335,103 @@ U|u_s\rangle &amp;= e^{\tfrac{2\pi i s}{r}}|u_s\rangle
 <p>In the below circuit, we'll then measure <span class="arithmatex">\(2^ns/r\)</span>, but the only thing that matters is that <span class="arithmatex">\(r\)</span> is in the denominator, and we can use continued fraction algorithm to extract it. Python have a built-in library for dealing with fractions, and we'll use it, also as a black box, further details of such algorithm can be found in <a href="../bib/">(Nielsen &amp; Chuang, 2011)</a>. </p>
 <p><img alt="" src="../images/shor_circuit.png" /></p>
 <p>The circuit is implemented below, we used the modular exponentiation implementation from Qiskit Textbook, and will treat as a black box, since we don't want to enter in quantum efficiency discussion of this process.</p>
-<pre><code class="language-python"># Imports
-import warnings
-warnings.filterwarnings(&quot;ignore&quot;,category=DeprecationWarning)
-from qiskit import QuantumCircuit, Aer
-from qiskit.circuit.library import QFT
-</code></pre>
-<pre><code class="language-python">def a_x_mod15(a, x):
-    if a not in [2,7,8,11,13]:
-        raise ValueError(&quot;'a' must be 2,7,8,11 or 13&quot;)
-    U = QuantumCircuit(4)        
-    for iteration in range(x):
-        if a in [2,13]:
-            U.swap(0,1)
-            U.swap(1,2)
-            U.swap(2,3)
-        if a in [7,8]:
-            U.swap(2,3)
-            U.swap(1,2)
-            U.swap(0,1)
-        if a == 11:
-            U.swap(1,3)
-            U.swap(0,2)
-        if a in [7,11,13]:
-            for q in range(4):
-                U.x(q)
-    U = U.to_gate()
-    U.name = &quot;%i^%i mod 15&quot; % (a, x)
-    c_U = U.control()
-    return c_U
+<details>
+    <summary>Imports</summary>
+<div class="highlight"><pre><span></span><code><span class="c1"># Imports</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">Aer</span><span class="p">,</span> <span class="n">assemble</span><span class="p">,</span> <span class="n">execute</span><span class="p">,</span><span class="n">transpile</span>
+<span class="kn">from</span> <span class="nn">qiskit.circuit.library</span> <span class="kn">import</span> <span class="n">QFT</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">gcd</span>
+<span class="kn">from</span> <span class="nn">fractions</span> <span class="kn">import</span> <span class="n">Fraction</span>
+</code></pre></div>
+    </details>
 
-def modular_exponentiation(given_circuit, n, m, a):
-    for x in range(n):
-        exponent = 2**x
-        given_circuit.append(a_x_mod15(a, exponent), 
-                     [x] + list(range(n, n+m)))
-</code></pre>
-<pre><code class="language-python">def shor_circuit(a,n,m):
-    # Input : a - guess for factor of 15
-    #         n - number of measurements
-    #         m - number of target qubits
+<details>
+<summary>Modular Exponentiation</summary>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">a_x_mod15</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">13</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;a&#39; must be 2,7,8,11 or 13&quot;</span><span class="p">)</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>        
+    <span class="k">for</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">13</span><span class="p">]:</span>
+            <span class="n">U</span><span class="o">.</span><span class="n">swap</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">U</span><span class="o">.</span><span class="n">swap</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">U</span><span class="o">.</span><span class="n">swap</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]:</span>
+            <span class="n">U</span><span class="o">.</span><span class="n">swap</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">U</span><span class="o">.</span><span class="n">swap</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">U</span><span class="o">.</span><span class="n">swap</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">11</span><span class="p">:</span>
+            <span class="n">U</span><span class="o">.</span><span class="n">swap</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">U</span><span class="o">.</span><span class="n">swap</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">13</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                <span class="n">U</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">to_gate</span><span class="p">()</span>
+    <span class="n">U</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">^</span><span class="si">%i</span><span class="s2"> mod 15&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">c_U</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">control</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">c_U</span>
 
-    # Setting up circuit
-    shor = QuantumCircuit(n+m, n)
+<span class="k">def</span> <span class="nf">modular_exponentiation</span><span class="p">(</span><span class="n">given_circuit</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">exponent</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">x</span>
+        <span class="n">given_circuit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a_x_mod15</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">exponent</span><span class="p">),</span> 
+                     <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="n">m</span><span class="p">)))</span>
+</code></pre></div>
+</details>
 
-    # Initializing firsts n qubits with Hadamard 
-    shor.h(range(n))
-    # Applying sigma_x gate to last qubit
-    shor.x(n+m-1)
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">shor_circuit</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">):</span>
+    <span class="c1"># Input : a - guess for factor of 15</span>
+    <span class="c1">#         n - number of measurements</span>
+    <span class="c1">#         m - number of target qubits</span>
 
-    #Apply modular exponentiation gates
-    modular_exponentiation(shor, n, m, a)
-    shor.barrier()
+    <span class="c1"># Setting up circuit</span>
+    <span class="n">shor</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
 
-    #Apply inverse QFT
-    shor.append(QFT(n, do_swaps=False).inverse(), range(n))
+    <span class="c1"># Initializing firsts n qubits with Hadamard </span>
+    <span class="n">shor</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+    <span class="c1"># Applying sigma_x gate to last qubit</span>
+    <span class="n">shor</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">shor</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span>
 
-    # measure the first n qubits
-    shor.measure(range(n), range(n))
+    <span class="c1">#Apply modular exponentiation gates</span>
+    <span class="n">modular_exponentiation</span><span class="p">(</span><span class="n">shor</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+    <span class="n">shor</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span>
 
-    return shor
-</code></pre>
+    <span class="c1">#Apply inverse QFT</span>
+    <span class="n">shor</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QFT</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">do_swaps</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">inverse</span><span class="p">(),</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+
+    <span class="c1"># measure the first n qubits</span>
+    <span class="n">shor</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">shor</span>
+</code></pre></div>
 <p>See the illustration of the circuit with <span class="arithmatex">\(a=2\)</span></p>
-<pre><code class="language-python">n = 4; m = 4; a = 2
-shor_example = shor_circuit(a,n,m)
-shor_example.draw()
-</code></pre>
-<pre style="word-wrap: normal;white-space: pre;background: #fff0;line-height: 1.1;font-family: &quot;Courier New&quot;,Courier,monospace">     ┌───┐                                                             ░ »
-q_0: ┤ H ├───────■─────────────────────────────────────────────────────░─»
-     ├───┤       │                                                     ░ »
-q_1: ┤ H ├───────┼──────────────■──────────────────────────────────────░─»
-     ├───┤       │              │                                      ░ »
-q_2: ┤ H ├───────┼──────────────┼──────────────■───────────────────────░─»
-     ├───┤       │              │              │                       ░ »
-q_3: ┤ H ├───────┼──────────────┼──────────────┼──────────────■────────░─»
-     └───┘┌──────┴──────┐┌──────┴──────┐┌──────┴──────┐┌──────┴──────┐ ░ »
-q_4: ─────┤0            ├┤0            ├┤0            ├┤0            ├─░─»
-          │             ││             ││             ││             │ ░ »
-q_5: ─────┤1            ├┤1            ├┤1            ├┤1            ├─░─»
-          │  2^1 mod 15 ││  2^2 mod 15 ││  2^4 mod 15 ││  2^8 mod 15 │ ░ »
-q_6: ─────┤2            ├┤2            ├┤2            ├┤2            ├─░─»
-     ┌───┐│             ││             ││             ││             │ ░ »
-q_7: ┤ X ├┤3            ├┤3            ├┤3            ├┤3            ├─░─»
-     └───┘└─────────────┘└─────────────┘└─────────────┘└─────────────┘ ░ »
-c: 4/════════════════════════════════════════════════════════════════════»
-                                                                         »
+<div class="highlight"><pre><span></span><code><span class="n">n</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">m</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">shor_example</span> <span class="o">=</span> <span class="n">shor_circuit</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">)</span>
+<span class="n">shor_example</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</code></pre></div>
+<pre style="word-wrap: normal;white-space: pre;background: #fff0;line-height: 1.1;font-family: &quot;Courier New&quot;,Courier,monospace">     ┌───┐ ░                                                              ░ »
+q_0: ┤ H ├─░────────■─────────────────────────────────────────────────────░─»
+     ├───┤ ░        │                                                     ░ »
+q_1: ┤ H ├─░────────┼──────────────■──────────────────────────────────────░─»
+     ├───┤ ░        │              │                                      ░ »
+q_2: ┤ H ├─░────────┼──────────────┼──────────────■───────────────────────░─»
+     ├───┤ ░        │              │              │                       ░ »
+q_3: ┤ H ├─░────────┼──────────────┼──────────────┼──────────────■────────░─»
+     └───┘ ░ ┌──────┴──────┐┌──────┴──────┐┌──────┴──────┐┌──────┴──────┐ ░ »
+q_4: ──────░─┤0            ├┤0            ├┤0            ├┤0            ├─░─»
+           ░ │             ││             ││             ││             │ ░ »
+q_5: ──────░─┤1            ├┤1            ├┤1            ├┤1            ├─░─»
+           ░ │  2^1 mod 15 ││  2^2 mod 15 ││  2^4 mod 15 ││  2^8 mod 15 │ ░ »
+q_6: ──────░─┤2            ├┤2            ├┤2            ├┤2            ├─░─»
+     ┌───┐ ░ │             ││             ││             ││             │ ░ »
+q_7: ┤ X ├─░─┤3            ├┤3            ├┤3            ├┤3            ├─░─»
+     └───┘ ░ └─────────────┘└─────────────┘└─────────────┘└─────────────┘ ░ »
+c: 4/═══════════════════════════════════════════════════════════════════════»
+                                                                            »
 «     ┌───────┐┌─┐         
 «q_0: ┤0      ├┤M├─────────
 «     │       │└╥┘┌─┐      
@@ -440,7 +452,56 @@ c: 4/═════════════════════════
 «c: 4/══════════╩══╩══╩══╩═
 «               0  1  2  3 </pre>
 
-<p>With the circuit implemented, we can follow with further pre-processing and post-processing of Shor's Algorithm</p>
+<p>With the circuit implemented, we can follow with further pre-processing and post-processing of Shor's Algorithm. The code below implements the logic of pseudocode in <a href="../shors-algorithm/">Section 2</a> putting everything we saw together. The code is commented to help interpretation.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Defining the simulator:</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">Aer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;qasm_simulator&#39;</span><span class="p">)</span> 
+
+<span class="k">def</span> <span class="nf">factor</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span><span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">):</span>
+    <span class="n">found_factors</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">bin</span><span class="p">(</span><span class="n">N</span><span class="p">))</span><span class="o">-</span><span class="mi">2</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">n</span>
+    <span class="n">valid_a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">13</span><span class="p">]</span>
+    <span class="k">while</span> <span class="n">found_factors</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="c1"># STEP 1: Choose a randomly in valid a&#39;s</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_a</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">valid_a</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trying a = </span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#defining a wrong r</span>
+
+        <span class="c1"># STEP 2: Find period r</span>
+        <span class="k">while</span> <span class="n">a</span><span class="o">**</span><span class="n">r</span><span class="o">%</span><span class="n">N</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span> <span class="c1">#Adding loop because QPE + continued fractions can find wrong r</span>
+            <span class="c1">## Substep 2.1: Find phase s/r</span>
+            <span class="c1">#Defining Shor&#39;s Circuits (QPE):</span>
+            <span class="n">qc</span> <span class="o">=</span> <span class="n">shor_circuit</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">)</span> 
+            <span class="c1">#Doing the measurement (binary):</span>
+            <span class="n">measure</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_memory</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1">#Converting to decimal base:</span>
+            <span class="n">measure</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">measure</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">phase</span> <span class="o">=</span> <span class="n">measure</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="c1">## Substep 2.2: Find denominator r (Continued fraction algorithm)</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">denominator</span>
+
+        <span class="c1"># STEPS 3 and 4: check if r is even and a^(r/2) != -1 (mod N)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="p">(</span><span class="n">r</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="n">N</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+            <span class="c1">#STEP 5: Compute factors</span>
+            <span class="n">factors</span> <span class="o">=</span> <span class="p">[</span><span class="n">gcd</span><span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="p">(</span><span class="n">r</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="p">),</span><span class="n">gcd</span><span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="p">(</span><span class="n">r</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="p">)]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; --- order r = </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">factors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="p">]:</span> <span class="c1"># Check to see if factor is a non trivial one</span>
+                <span class="n">found_factors</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; --- Sucessfully found factors </span><span class="si">{</span><span class="n">factors</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; --- Trivial factors found: [1,15]&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">found_factors</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; --- a=</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2"> failed!&quot;</span><span class="p">)</span>
+        <span class="n">valid_a</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">factor</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Trying a = 7
+ --- order r = 4
+ --- Sucessfully found factors [3, 5]
+</code></pre></div>
                 
               
               
