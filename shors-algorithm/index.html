@@ -14,7 +14,7 @@
     
     
       
-        <title>2 - Shor's Algorithm - Shor's Algorithm and Quantum Computing</title>
+        <title>2 - Shor's Algorithm - Theory - Shor's Algorithm and Quantum Computing</title>
       
     
     
@@ -93,7 +93,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              2 - Shor's Algorithm
+              2 - Shor's Algorithm - Theory
             
           </span>
         </div>
@@ -205,12 +205,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          2 - Shor's Algorithm
+          2 - Shor's Algorithm - Theory
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        2 - Shor's Algorithm
+        2 - Shor's Algorithm - Theory
       </a>
       
         
@@ -297,7 +297,7 @@
   
     <li class="md-nav__item">
       <a href="../quantum-shors/" class="md-nav__link">
-        5 - Quantum Shor's Algorithm
+        5 - Shor's Algorithm - Implementation
       </a>
     </li>
   
@@ -438,8 +438,8 @@ md = markdown.Markdown(extensions=['pymdownx.arithmatex'])
 <blockquote>
 <p><strong>Theorem 1:</strong> Let <span class="arithmatex">\(N=p_1^{\alpha_1}p_2^{\alpha_2}\ldots p_m^{\alpha_m}\)</span> the prime factorization of a positive composite number <span class="arithmatex">\(N\)</span>. If <span class="arithmatex">\(a\)</span> is an uniformly random number choosen from <span class="arithmatex">\(G_N\)</span>, and <span class="arithmatex">\(r\)</span> its order modulo <span class="arithmatex">\(N\)</span>, then:</p>
 <div class="arithmatex">\[\mathbb{P}\left(\text{r is even and }a^{r/2}+1\not\equiv0~(mod~N)\right )\geq1-\dfrac{1}{2^{m-1}}\]</div>
-<p>Then, in the case where <span class="arithmatex">\(N=pq\)</span> (<span class="arithmatex">\(m=2\)</span>), the probability of success is greater or equal <span class="arithmatex">\(1/2\)</span>.</p>
 </blockquote>
+<p>Then, in the case where <span class="arithmatex">\(N=pq\)</span> (<span class="arithmatex">\(m=2\)</span>), the probability of success is greater or equal <span class="arithmatex">\(1/2\)</span>.</p>
 <p>At first, consider <span class="arithmatex">\(N\)</span> being an odd prime number (because even primes won't appear in encryption applications). We'll have <span class="arithmatex">\(|G_N|=\varphi(N)=N-1\)</span>, an even number, so consider <span class="arithmatex">\(2^d\)</span> the large power of 2 diving <span class="arithmatex">\(N-1\)</span>. As said before, it can be show that <span class="arithmatex">\(G_N\)</span> is a cyclic group under modulo <span class="arithmatex">\(N\)</span> multiplication. So there is a generator <span class="arithmatex">\(g\)</span> such that any element from <span class="arithmatex">\(G_N\)</span> can be written as <span class="arithmatex">\(g^t~(mod~N)\)</span>. If <span class="arithmatex">\(r\)</span> is the order of <span class="arithmatex">\(g^t\)</span>, then <span class="arithmatex">\(g^{tr}\equiv1~(mod~N)\)</span>.</p>
 <p>By <a href="https://en.wikipedia.org/wiki/Lagrange%27s_theorem_(group_theory)">Lagrange's Theorem</a>, <span class="arithmatex">\(tr|N-1\)</span>. If <span class="arithmatex">\(t\)</span> is odd, then <span class="arithmatex">\(2^d\)</span> must divide <span class="arithmatex">\(r\)</span>, so <span class="arithmatex">\(r\)</span> is even. If <span class="arithmatex">\(t\)</span> happens to be even, we'll have:</p>
 <div class="arithmatex">\[g^{(N-1)t/2}\equiv(g^{(N-1)})^{t/2}\equiv1~(mod~N),\]</div>

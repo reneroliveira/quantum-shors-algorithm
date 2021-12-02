@@ -14,7 +14,7 @@
     
     
       
-        <title>5 - Quantum Shor's Algorithm - Shor's Algorithm and Quantum Computing</title>
+        <title>5 - Shor's Algorithm - Implementation - Shor's Algorithm and Quantum Computing</title>
       
     
     
@@ -61,7 +61,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#quantum-shors-algorithm" class="md-skip">
+        <a href="#shors-algorithm-implementation" class="md-skip">
           Skip to content
         </a>
       
@@ -93,7 +93,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              5 - Quantum Shor's Algorithm
+              5 - Shor's Algorithm - Implementation
             
           </span>
         </div>
@@ -196,7 +196,7 @@
   
     <li class="md-nav__item">
       <a href="../shors-algorithm/" class="md-nav__link">
-        2 - Shor's Algorithm
+        2 - Shor's Algorithm - Theory
       </a>
     </li>
   
@@ -250,7 +250,7 @@
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        5 - Quantum Shor's Algorithm
+        5 - Shor's Algorithm - Implementation
       </a>
       
     </li>
@@ -319,8 +319,128 @@
               
                 
                 
-                <h1 id="quantum-shors-algorithm">Quantum Shor's Algorithm</h1>
+                <h1 id="shors-algorithm-implementation">Shor's Algorithm  - Implementation</h1>
+<p>In this section we'll design the algorithm described in <a href="../shors-algorithm/">Section 2</a>, putting together the classical part, and all quantum ingredients we saw in previous sections.</p>
+<p>In order to design a quantum circuit to return the period <span class="arithmatex">\(r\)</span> of <span class="arithmatex">\(f(x)=a^x~(mod~ 15)\)</span>, we'll need a <a href="https://qiskit.org/textbook/ch-algorithms/quantum-phase-estimation.html">Quantum Phase Estimation Circuit</a>. Although we didn't covered its details here, we're going to explain what it does and you can see the details in the link provided.</p>
+<p>What Quantum Phase Estimation (QPE) does is: Given a Unitary operator <span class="arithmatex">\(U\)</span> and its eigenstate <span class="arithmatex">\(\psi\)</span> (an eigenstate is such that <span class="arithmatex">\(U\vert\psi\rangle=e^{i\theta_\psi}\vert\psi\rangle\)</span>) returns its phase <span class="arithmatex">\(\theta_\psi\)</span>.</p>
+<p>Actually, what it really does, is collapsing to <span class="arithmatex">\(2^n\theta\)</span>, considering <span class="arithmatex">\(U\vert\psi\rangle=e^{2\pi i\theta}\vert\psi\rangle\)</span>.</p>
+<p>In the case of factoring, the Unitary operator will be:</p>
+<div class="arithmatex">\[U|y\rangle \equiv |ay \bmod N \rangle\]</div>
+<p>with the eigenstates <span class="arithmatex">\(u_s\)</span> having the phase <span class="arithmatex">\(2\pi s/r\)</span>:</p>
+<div class="arithmatex">\[\begin{aligned}
+|u_s\rangle &amp;= \tfrac{1}{\sqrt{r}}\sum_{k=0}^{r-1}{e^{-\tfrac{2\pi i s k}{r}}|a^k \bmod N\rangle}\\
+U|u_s\rangle &amp;= e^{\tfrac{2\pi i s}{r}}|u_s\rangle 
+\end{aligned}
+\]</div>
+<p>In the below circuit, we'll then measure <span class="arithmatex">\(2^ns/r\)</span>, but the only thing that matters is that <span class="arithmatex">\(r\)</span> is in the denominator, and we can use continued fraction algorithm to extract it. Python have a built-in library for dealing with fractions, and we'll use it, also as a black box, further details of such algorithm can be found in <a href="../bib/">(Nielsen &amp; Chuang, 2011)</a>. </p>
 <p><img alt="" src="../images/shor_circuit.png" /></p>
+<p>The circuit is implemented below, we used the modular exponentiation implementation from Qiskit Textbook, and will treat as a black box, since we don't want to enter in quantum efficiency discussion of this process.</p>
+<pre><code class="language-python"># Imports
+import warnings
+warnings.filterwarnings(&quot;ignore&quot;,category=DeprecationWarning)
+from qiskit import QuantumCircuit, Aer
+from qiskit.circuit.library import QFT
+</code></pre>
+<pre><code class="language-python">def a_x_mod15(a, x):
+    if a not in [2,7,8,11,13]:
+        raise ValueError(&quot;'a' must be 2,7,8,11 or 13&quot;)
+    U = QuantumCircuit(4)        
+    for iteration in range(x):
+        if a in [2,13]:
+            U.swap(0,1)
+            U.swap(1,2)
+            U.swap(2,3)
+        if a in [7,8]:
+            U.swap(2,3)
+            U.swap(1,2)
+            U.swap(0,1)
+        if a == 11:
+            U.swap(1,3)
+            U.swap(0,2)
+        if a in [7,11,13]:
+            for q in range(4):
+                U.x(q)
+    U = U.to_gate()
+    U.name = &quot;%i^%i mod 15&quot; % (a, x)
+    c_U = U.control()
+    return c_U
+
+def modular_exponentiation(given_circuit, n, m, a):
+    for x in range(n):
+        exponent = 2**x
+        given_circuit.append(a_x_mod15(a, exponent), 
+                     [x] + list(range(n, n+m)))
+</code></pre>
+<pre><code class="language-python">def shor_circuit(a,n,m):
+    # Input : a - guess for factor of 15
+    #         n - number of measurements
+    #         m - number of target qubits
+
+    # Setting up circuit
+    shor = QuantumCircuit(n+m, n)
+
+    # Initializing firsts n qubits with Hadamard 
+    shor.h(range(n))
+    # Applying sigma_x gate to last qubit
+    shor.x(n+m-1)
+
+    #Apply modular exponentiation gates
+    modular_exponentiation(shor, n, m, a)
+    shor.barrier()
+
+    #Apply inverse QFT
+    shor.append(QFT(n, do_swaps=False).inverse(), range(n))
+
+    # measure the first n qubits
+    shor.measure(range(n), range(n))
+
+    return shor
+</code></pre>
+<p>See the illustration of the circuit with <span class="arithmatex">\(a=2\)</span></p>
+<pre><code class="language-python">n = 4; m = 4; a = 2
+shor_example = shor_circuit(a,n,m)
+shor_example.draw()
+</code></pre>
+<pre style="word-wrap: normal;white-space: pre;background: #fff0;line-height: 1.1;font-family: &quot;Courier New&quot;,Courier,monospace">     ┌───┐                                                             ░ »
+q_0: ┤ H ├───────■─────────────────────────────────────────────────────░─»
+     ├───┤       │                                                     ░ »
+q_1: ┤ H ├───────┼──────────────■──────────────────────────────────────░─»
+     ├───┤       │              │                                      ░ »
+q_2: ┤ H ├───────┼──────────────┼──────────────■───────────────────────░─»
+     ├───┤       │              │              │                       ░ »
+q_3: ┤ H ├───────┼──────────────┼──────────────┼──────────────■────────░─»
+     └───┘┌──────┴──────┐┌──────┴──────┐┌──────┴──────┐┌──────┴──────┐ ░ »
+q_4: ─────┤0            ├┤0            ├┤0            ├┤0            ├─░─»
+          │             ││             ││             ││             │ ░ »
+q_5: ─────┤1            ├┤1            ├┤1            ├┤1            ├─░─»
+          │  2^1 mod 15 ││  2^2 mod 15 ││  2^4 mod 15 ││  2^8 mod 15 │ ░ »
+q_6: ─────┤2            ├┤2            ├┤2            ├┤2            ├─░─»
+     ┌───┐│             ││             ││             ││             │ ░ »
+q_7: ┤ X ├┤3            ├┤3            ├┤3            ├┤3            ├─░─»
+     └───┘└─────────────┘└─────────────┘└─────────────┘└─────────────┘ ░ »
+c: 4/════════════════════════════════════════════════════════════════════»
+                                                                         »
+«     ┌───────┐┌─┐         
+«q_0: ┤0      ├┤M├─────────
+«     │       │└╥┘┌─┐      
+«q_1: ┤1      ├─╫─┤M├──────
+«     │  IQFT │ ║ └╥┘┌─┐   
+«q_2: ┤2      ├─╫──╫─┤M├───
+«     │       │ ║  ║ └╥┘┌─┐
+«q_3: ┤3      ├─╫──╫──╫─┤M├
+«     └───────┘ ║  ║  ║ └╥┘
+«q_4: ──────────╫──╫──╫──╫─
+«               ║  ║  ║  ║ 
+«q_5: ──────────╫──╫──╫──╫─
+«               ║  ║  ║  ║ 
+«q_6: ──────────╫──╫──╫──╫─
+«               ║  ║  ║  ║ 
+«q_7: ──────────╫──╫──╫──╫─
+«               ║  ║  ║  ║ 
+«c: 4/══════════╩══╩══╩══╩═
+«               0  1  2  3 </pre>
+
+<p>With the circuit implemented, we can follow with further pre-processing and post-processing of Shor's Algorithm</p>
                 
               
               

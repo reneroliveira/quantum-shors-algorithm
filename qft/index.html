@@ -196,7 +196,7 @@
   
     <li class="md-nav__item">
       <a href="../shors-algorithm/" class="md-nav__link">
-        2 - Shor's Algorithm
+        2 - Shor's Algorithm - Theory
       </a>
     </li>
   
@@ -266,6 +266,20 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#quantum-states-math-formulation" class="md-nav__link">
+    Quantum states math formulation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qft-circuit" class="md-nav__link">
+    QFT Circuit
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -283,7 +297,7 @@
   
     <li class="md-nav__item">
       <a href="../quantum-shors/" class="md-nav__link">
-        5 - Quantum Shor's Algorithm
+        5 - Shor's Algorithm - Implementation
       </a>
     </li>
   
@@ -353,6 +367,20 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#quantum-states-math-formulation" class="md-nav__link">
+    Quantum states math formulation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qft-circuit" class="md-nav__link">
+    QFT Circuit
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -369,7 +397,7 @@
                 <h1 id="quantum-fourier-transform">Quantum Fourier Transform</h1>
 <p>The Quantum Fourier Transform is just a change of basis, from the computational basis to Fourier one. It takes a quantum state <span class="arithmatex">\(\vert x \rangle = \vert x_1\ldots x_n \rangle\)</span> and maps it to:</p>
 <div class="arithmatex">\[\underbrace{\vert \tilde x\rangle}_{\text{Fourier basis}}=QFT_N \vert x \rangle =  \dfrac{1}{\sqrt{N}} \sum_{y=0}^{N-1} e^{2 \pi i xy / N} \vert y \rangle\]</div>
-<p>Where <span class="arithmatex">\(N=2^n\)</span> (<span class="arithmatex">\(n\)</span> = number of qubits) and <span class="arithmatex">\(\vert y\rangle\)</span> is representing its respective binary quantum state <span class="arithmatex">\(\vert y_1y_2\ldots y_n\rangle\)</span>, with <span class="arithmatex">\(y_i\in\{0,1\}\)</span>.</p>
+<p>Where <span class="arithmatex">\(N=2^n\)</span> (<span class="arithmatex">\(n\)</span> = number of qubits) and <span class="arithmatex">\(\vert y\rangle\)</span> represents its respective binary quantum state <span class="arithmatex">\(\vert y_1y_2\ldots y_n\rangle\)</span>, with <span class="arithmatex">\(y_i\in\{0,1\}\)</span>. (Actually, the sum <span class="arithmatex">\(\sum_{y=0}^{N-1}\)</span> is a shortcut notation for <span class="arithmatex">\(\displaystyle\sum_{y_1=0}^1\sum_{y_2=0}^{1}\ldots\sum_{y_n=0}^{1}\)</span>)</p>
 <h2 id="examples">Examples</h2>
 <p>Let's begin with the 1-qubit case, where <span class="arithmatex">\(N=2^1\)</span>:</p>
 <div class="arithmatex">\[\begin{align*}
@@ -390,44 +418,100 @@
 <p><img alt="" src="../images/zbasis-counting.gif" /></p>
 <p>In the Fourier basis, all states are on the equatorial plane. The leftmost is rotated <span class="arithmatex">\(2\pi/16\)</span> radians by number increment, the next qubit (<span class="arithmatex">\(x_3\)</span>) rotates <span class="arithmatex">\(2\pi/8\)</span> per time, <span class="arithmatex">\(x_2\)</span> rotates <span class="arithmatex">\(2\pi/4\)</span> and <span class="arithmatex">\(x_1\)</span> with an angle of <span class="arithmatex">\(2\pi/2=\pi\)</span> radians. We are doubling the angle of rotation on each qubit.</p>
 <p><img alt="" src="../images/fourierbasis-counting.gif" /></p>
-<pre><code class="language-python">
-</code></pre>
-<pre><code class="language-python">
-</code></pre>
+<h2 id="quantum-states-math-formulation">Quantum states math formulation</h2>
+<p>The above animation of quantum states in the Fourier basis can be formalized with a bit of math manipulation on the QFT formula. As we briefly stated before, when we write <span class="arithmatex">\(\vert y\rangle\)</span> we are representing the state <span class="arithmatex">\(\vert y_1y_2\ldots y_n\rangle\)</span>, so <span class="arithmatex">\(y\)</span> in decimal base is <span class="arithmatex">\(2^{n-1}y_1+2^{n-2}y_2+\ldots +2^0y_n\)</span>. So replacing <span class="arithmatex">\(\vert y\rangle\)</span> by its decimal representation, and the sum from <span class="arithmatex">\(0\)</span> to <span class="arithmatex">\(N-1\)</span> to the binary equivalent, we get:</p>
+<div class="arithmatex">\[\begin{align*}
+QFT_N\vert x\rangle &amp; =  \dfrac{1}{\sqrt{N}} \displaystyle\sum_{y=0}^{N-1} e^{2 \pi i xy / N} \vert y \rangle\\
+&amp;=\displaystyle\dfrac{1}{\sqrt N}\sum_{y_1=0}^1\sum_{y_2=0}^{1}\ldots\sum_{y_n=0}^{1}\exp\left(\frac{2\pi ix}{N}\sum_{k=1}^n2^{n-k}y_k\right)\vert y_1y_2\ldots y_n\rangle\\
+&amp;=\dfrac{1}{\sqrt N}\sum_{y_1,y_2,\ldots,y_n}\prod_{k=1}^n\exp\left(\frac{2\pi ix}{N}y_k2^{n-k}\right)\vert y_1y_2\ldots y_n\rangle\\
+&amp;=\dfrac{1}{\sqrt N}\sum_{y_1,y_2,\ldots,y_n}\prod_{k=1}^n\exp\left(2\pi ixy_k2^{-k}\right)\vert y_1y_2\ldots y_n\rangle
+\end{align*}\]</div>
+<p>By swapping the order of the product and the sum, we got a tensor product:</p>
+<div class="arithmatex">\[\begin{align*}
+&amp;\dfrac{1}{\sqrt N}\bigotimes_{k=1}^n\left(e^{2\pi ix(0)2^{-k}}\vert 0\rangle + e^{2\pi ix (1)2^{-k}}\vert1\rangle\right)\\
+&amp;=\dfrac{1}{\sqrt N}\bigotimes_{k=1}^n\left(\vert 0\rangle + e^{2\pi ix 2^{-k}}\vert1\rangle\right)\\
+&amp;=\dfrac{1}{\sqrt N}\left(\vert0\rangle+e^{2\pi ix/2}\vert1\rangle\right)\otimes\left(\vert0\rangle+e^{2\pi ix/4}\vert1\rangle\right)\otimes\ldots\otimes\left(\vert0\rangle+e^{2\pi i x/2^n}\vert1\rangle\right)
+\end{align*}\]</div>
+<p>Notice we went from <span class="arithmatex">\(\vert x\rangle = \vert x_1\rangle\otimes\vert x_2\rangle\otimes\ldots\otimes\vert x_n\rangle\)</span> to the state above, which tells us exatly what the the transform is doing to each entry of <span class="arithmatex">\(x\)</span>. Regard constants, we have:</p>
+<div class="arithmatex">\[\vert x_k\rangle \mapsto \vert 0\rangle + e^{2\pi ix 2^{-k}}\vert1\rangle\]</div>
+<p>Such an operation explains the above animation: the complex exponential term is responsible for the rotation seen. Moreover, this gives us hints for building a quantum circuit to implement QFT since we explicitly know what to do on each qubit.</p>
+<h2 id="qft-circuit">QFT Circuit</h2>
+<p>We'll need two atomic elements for building a circuit that implements QFT: the already known Hadamard gate and the controlled rotation gate.</p>
+<p>We know that </p>
+<div class="arithmatex">\[H\vert0\rangle=\frac{1}{\sqrt2}(\vert0\rangle+\vert1\rangle)$$ and $$H\vert1\rangle=\frac{1}{\sqrt2}(\vert0\rangle-\vert1\rangle)\]</div>
+<p>We can also write Hadamard operation acting on <span class="arithmatex">\(x_k\in\{0,1\}\)</span> as:</p>
+<div class="arithmatex">\[H\vert x_k\rangle\dfrac{1}{\sqrt2}\left(\vert0\rangle+e^{2\pi i x_k/2}\vert1\rangle\right)\]</div>
+<p>The other element, controlled rotation acts on two-qubit states <span class="arithmatex">\(\vert x_ix_j\rangle\)</span> and is based on the following unitary operator:</p>
+<div class="arithmatex">\[UROT_k = \left[\begin{matrix}
+1&amp;0\\
+0&amp;e^{2\pi i/2^k}\\
+\end{matrix}\right]
+\]</div>
+<p>The, Controlled Rotation operator <span class="arithmatex">\(CROT_k\)</span> will be the 4x4 matrix:</p>
+<div class="arithmatex">\[CROT_k = \left[\begin{matrix}
+I&amp;0\\
+0&amp;UROT_k\\
+\end{matrix}\right]\]</div>
+<p>Remember that <span class="arithmatex">\(\vert x_ix_j\rangle=\vert x_i\rangle\otimes\vert x_j\rangle\)</span> which is a columns vector with four entries, so the operation <span class="arithmatex">\(CROT_k\vert x_ix_j\rangle\)</span> is dimentionally consistent. The first qubit <span class="arithmatex">\(x_i\)</span> is the control qubit and tha second, <span class="arithmatex">\(x_j\)</span> is the target one. So, as an example, se what happens when applying CROT to <span class="arithmatex">\(\vert0x_j\rangle\)</span> and <span class="arithmatex">\(\vert1x_j\rangle\)</span>:</p>
+<div class="arithmatex">\[\begin{align*}CROT_k\vert 0x_j\rangle&amp;=CROT_k\vert 0\rangle\otimes\vert x_j\rangle=\left[\begin{matrix}
+I&amp;0\\
+0&amp;UROT_k\\
+\end{matrix}\right]\left(\begin{matrix}x_{j1}\\x_{j2}\\0\\0\end{matrix}\right)\\
+&amp;=\left(\begin{matrix}x_{j1}\\x_{j2}\\0\\0\end{matrix}\right)\\&amp;=\vert0x_j\rangle\end{align*}\]</div>
+<div class="arithmatex">\[\begin{align*}CROT_k\vert 1x_j\rangle&amp;=CROT_k\vert 1\rangle\otimes\vert x_j\rangle=\left[\begin{matrix}
+I&amp;0\\
+0&amp;UROT_k\\
+\end{matrix}\right]\left(\begin{matrix}0\\0\\x_{j1}\\x_{j2}\end{matrix}\right)\\&amp;=\left(\begin{matrix}0\\0\\x_{j1}\\e^{2\pi i/2^k}x_{j2}\end{matrix}\right)=\vert1\rangle\otimes\left(\begin{matrix}e^{2\pi i\cdot0/2^k}x_{j1}\\e^{2\pi i/2^k}x_{j2}\end{matrix}\right)\\&amp;=e^{2\pi x_j/2^k}\vert1x_j\rangle\end{align*}\]</div>
+<p>The QFT circuit is represented below:</p>
 <p><img alt="" src="../images/qft.png" /></p>
-<pre><code class="language-python">import numpy as np
-from numpy import pi
-warnings.filterwarnings(&quot;ignore&quot;)
-# importing Qiskit
-from qiskit import QuantumCircuit, transpile, assemble, Aer, IBMQ
-from qiskit.providers.ibmq import least_busy
-from qiskit.tools.monitor import job_monitor
-from qiskit.visualization import plot_histogram, plot_bloch_multivector
-import warnings
-</code></pre>
-<pre><code class="language-python">qc = QuantumCircuit(3)
-</code></pre>
-<pre><code class="language-python">qc.h(2)
-qc.draw()
-</code></pre>
-<pre style="word-wrap: normal;white-space: pre;background: #fff0;line-height: 1.1;font-family: &quot;Courier New&quot;,Courier,monospace">          
-q_0: ─────
-
-q_1: ─────
-     ┌───┐
-q_2: ┤ H ├
-     └───┘</pre>
-
-<pre><code class="language-python">qc.cp(pi/2, 1, 2) # CROT from qubit 1 to qubit 2
-qc.draw()
-</code></pre>
-<pre style="word-wrap: normal;white-space: pre;background: #fff0;line-height: 1.1;font-family: &quot;Courier New&quot;,Courier,monospace">                   
-q_0: ──────────────
-
-q_1: ──────■───────
-     ┌───┐ │P(π/2) 
-q_2: ┤ H ├─■───────
-     └───┘         </pre>
+<p>Let's see what's the state becomes on each checkpoited step:</p>
+<p>The input is the <span class="arithmatex">\(n\)</span>-qubit state <span class="arithmatex">\(\vert x\rangle=\vert x_1x_2\ldots x_n\rangle\)</span></p>
+<ul>
+<li><strong>Step 1:</strong> Applys Hadamard gate on the first qubit. The state after that will be:</li>
+</ul>
+<div class="arithmatex">\[\dfrac{1}{\sqrt2}\left[\vert0\rangle+e^{2\pi i x_12^{-1}}\vert1\rangle\right]\otimes\vert x_2x_3\ldots x_n\rangle\]</div>
+<ul>
+<li><strong>Step 2:</strong> Applys Unitary Rotarion <span class="arithmatex">\(UROT_2\)</span> on the first qubit, controlled by the second. State after that:</li>
+</ul>
+<div class="arithmatex">\[\dfrac{1}{\sqrt2}\left[\vert0\rangle+e^{2\pi i x_22^{-2}}e^{2\pi i x_12^{-1}}\vert1\rangle\right]\otimes\vert x_2x_3\ldots x_n\rangle\]</div>
+<ul>
+<li><strong>Step 3:</strong> After applying <span class="arithmatex">\(UROT_k\)</span> on qubit 1 controlled on qubit <span class="arithmatex">\(k\)</span> with <span class="arithmatex">\(k\)</span> from 2 to <span class="arithmatex">\(n\)</span>, well get, following the above pattern:</li>
+</ul>
+<div class="arithmatex">\[\dfrac{1}{\sqrt2}\left[\vert0\rangle+e^{2\pi i x_n2^{-n}}e^{2\pi i x_{n-1}2^{-(n-1)}}\ldots e^{2\pi i x_22^{-2}}e^{2\pi i x_1 2^{-1}}\vert1\rangle\right]\otimes\vert x_2x_3\ldots x_n\rangle\]</div>
+<p>which is equal:</p>
+<div class="arithmatex">\[\dfrac{1}{\sqrt2}\left[\vert0\rangle+\exp{\left(2\pi i\sum_{k=1}^nx_k2^{-k}\right)}\vert1\rangle\right]\otimes\vert x_2x_3\ldots x_n\rangle\]</div>
+<p>But <span class="arithmatex">\(x\)</span> in decimal base is <span class="arithmatex">\(x=\displaystyle\sum_{k=1}^nx_k2^{n-k}\)</span>, so whats inside the above exponential is just <span class="arithmatex">\(2\pi i x/2^n\)</span>, we then simplyfies the output to:</p>
+<div class="arithmatex">\[\dfrac{1}{\sqrt2}\left[\vert0\rangle+e^{2\pi i x2^{-n}}\vert1\rangle\right]\otimes\vert x_2x_3\ldots x_n\rangle\]</div>
+<ul>
+<li><strong>Step 4:</strong> We now apply the above block of steps to the remaining qubits, the process is very similar, and in the end the final state will be:</li>
+</ul>
+<div class="arithmatex">\[\frac{1}{\sqrt{2}}
+\left[\vert0\rangle + 
+e^{2\pi i x2^{-n}}
+\vert1\rangle\right]
+\otimes
+\frac{1}{\sqrt{2}}
+\left[\vert0\rangle + 
+e^{2\pi i x2^{-(n-1)}}
+\vert1\rangle\right]
+\otimes
+\ldots
+\otimes
+\frac{1}{\sqrt{2}}
+\left[\vert0\rangle + 
+e^{2\pi i x2^{-2}}
+\vert1\rangle\right]
+\otimes
+\frac{1}{\sqrt{2}}
+\left[\vert0\rangle + 
+e^{2\pi i x2^{-1}}
+\vert1\rangle\right]
+\]</div>
+<p>The constants multiplies to <span class="arithmatex">\(\frac{1}{\sqrt N}\)</span>, so what we get as final state is just the formula derived previously, but in reversed order. Notice that the first transformed qubit is <span class="arithmatex">\(\vert0\rangle + 
+e^{2\pi i x2^{-n}}
+\vert1\rangle\)</span>, where it was supposed to be <span class="arithmatex">\(\vert0\rangle + 
+e^{2\pi i x2^{-1}}
+\vert1\rangle\)</span> in our desired QFT formula, but that's not a problem at all, we just reverse the order of qubits and done!</p>
                 
               
               
@@ -463,13 +547,13 @@ q_2: ┤ H ├─■───────
       
       
         
-        <a href="../quantum-shors/" class="md-footer__link md-footer__link--next" aria-label="Next: 5 - Quantum Shor&#39;s Algorithm" rel="next">
+        <a href="../quantum-shors/" class="md-footer__link md-footer__link--next" aria-label="Next: 5 - Shor&#39;s Algorithm - Implementation" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              5 - Quantum Shor's Algorithm
+              5 - Shor's Algorithm - Implementation
             </div>
           </div>
           <div class="md-footer__button md-icon">

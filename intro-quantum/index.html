@@ -196,7 +196,7 @@
   
     <li class="md-nav__item">
       <a href="../shors-algorithm/" class="md-nav__link">
-        2 - Shor's Algorithm
+        2 - Shor's Algorithm - Theory
       </a>
     </li>
   
@@ -219,9 +219,69 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          3 - Quantum Computing Preliminaries
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         3 - Quantum Computing Preliminaries
       </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quantum-states-and-dirac-notation" class="md-nav__link">
+    Quantum States and Dirac Notation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measurements-and-born-rule" class="md-nav__link">
+    Measurements and Born Rule
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-bloch-sphere" class="md-nav__link">
+    The Bloch Sphere
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quantum-circuits" class="md-nav__link">
+    Quantum Circuits
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qiskit-introduction" class="md-nav__link">
+    Qiskit Introduction
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -251,7 +311,7 @@
   
     <li class="md-nav__item">
       <a href="../quantum-shors/" class="md-nav__link">
-        5 - Quantum Shor's Algorithm
+        5 - Shor's Algorithm - Implementation
       </a>
     </li>
   
@@ -308,6 +368,49 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quantum-states-and-dirac-notation" class="md-nav__link">
+    Quantum States and Dirac Notation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measurements-and-born-rule" class="md-nav__link">
+    Measurements and Born Rule
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-bloch-sphere" class="md-nav__link">
+    The Bloch Sphere
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quantum-circuits" class="md-nav__link">
+    Quantum Circuits
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qiskit-introduction" class="md-nav__link">
+    Qiskit Introduction
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -320,7 +423,129 @@
                 
                 
                 <h1 id="introduction-to-quantum-computing">Introduction to Quantum Computing</h1>
-<p>Qubits, dirac notation, measurements, bloch sphere, quantum circuits, q-sphere</p>
+<!-- Qubits, dirac notation, measurements, bloch sphere, quantum circuits -->
+
+<p>In classical computation, states (bits) are either 0 or 1, but quantum mechanics allows superposition of states, so a quantum state can be simultaneously 0 and 1. Such a superposition allows quantum computers to make calculations on more than one state at the same time. That's what makes possible the design of algorithms with exponentially speed-up such as Shor's Algorithm, which reduces to polynomial time, a task that runs in exponential time on classical computers.</p>
+<p>A quantum state in superposition can be measured, but once we do that, it collapses to one of its states with a given probability. That's what makes the design of quantum algorithms harder than classical ones because we have to draw a system that collapses to what we want with a high probability.</p>
+<p>This section seeks to introduce just the basic foundations of quantum computing as a background for the following sections. No prerequisite in quantum physics/mechanics is required. We'll present everything from the mathematical point of view, demanding just some prior knowledge in Linear Algebra and Complex Numbers.</p>
+<h2 id="quantum-states-and-dirac-notation">Quantum States and Dirac Notation</h2>
+<p>We represent a <span class="arithmatex">\(n\)</span>-qubit quantum state as a normalized vector in <span class="arithmatex">\(\mathbb{C}^{2^n}\)</span> (that's it!). Take for example, the single-qubit states <span class="arithmatex">\(a,b\in \mathbb{C}^2\)</span> such that <span class="arithmatex">\(a=\left(\begin{matrix}a_1\\ a_2\end{matrix}\right)\)</span> and <span class="arithmatex">\(b=\left(\begin{matrix}b_1\\ b_2\end{matrix}\right)\)</span> with <span class="arithmatex">\(a_1,a_2,b_1,b_2\in\mathbb{C}\)</span>. The so called Dirac notation is a shortcut for representing states and operations between them.</p>
+<ul>
+<li><strong>ket:</strong> <span class="arithmatex">\(\vert a\rangle = \left(\begin{matrix}a_1\\ a_2\end{matrix}\right)\)</span></li>
+</ul>
+<p>The most used notation around this text, it's the way we represent a quantum state.</p>
+<ul>
+<li><strong>bra:</strong> <span class="arithmatex">\(\langle b \vert = \vert b \rangle^\dagger=\left(\begin{matrix}b_1\\ b_2\end{matrix}\right)^\dagger=\left(\begin{matrix}\overline{b_1}&amp; \overline b_2\end{matrix}\right)\)</span></li>
+</ul>
+<p>The bra is the conjugate transpose of a state (dagger notation <span class="arithmatex">\(\dagger\)</span>). <span class="arithmatex">\(\overline b_1\)</span> means the complex conjugate of <span class="arithmatex">\(b_1\)</span>.</p>
+<ul>
+<li><strong>bra-ket:</strong> <span class="arithmatex">\(\langle b \vert a\rangle=a_1\overline b_1+a_2\overline b_2\)</span></li>
+</ul>
+<p>A "inner product" between states. Observe that <span class="arithmatex">\(\langle b \vert a\rangle = \overline {\langle a\vert b \rangle}\)</span>. We say <span class="arithmatex">\(a\)</span> and <span class="arithmatex">\(b\)</span> are <strong>orthogonal states</strong> if <span class="arithmatex">\(\langle a\vert b\rangle = 0\)</span>.</p>
+<p>Not every complex vector can represent quantum states, because they need to be normalized, i.e, all states <span class="arithmatex">\(\vert\psi\rangle\)</span> must satisfy <span class="arithmatex">\(\langle\psi\vert\psi\rangle=1\)</span>. </p>
+<p>We define states <span class="arithmatex">\(\vert0\rangle := \left(\begin{matrix}1\\0\end{matrix}\right)\)</span> and <span class="arithmatex">\(\vert1\rangle:=\left(\begin{matrix}0\\1\end{matrix}\right)\)</span>. It's easy to see that <span class="arithmatex">\(\langle0\vert1\rangle=0\)</span>, so <span class="arithmatex">\(\vert0\rangle\)</span> and <span class="arithmatex">\(\vert1\rangle\)</span> are orthogonal.</p>
+<p>The general single-qubit state is then:</p>
+<div class="arithmatex">\[\vert\psi\rangle = \alpha_0\vert0\rangle+\alpha_1\vert1\rangle,\]</div>
+<p>with <span class="arithmatex">\(\alpha_0,\alpha_1\in\mathbb{C}\)</span> and <span class="arithmatex">\(|\alpha_0|^2+|\alpha_1|^2=1\)</span></p>
+<p>We also define the tensor product of two states as:</p>
+<div class="arithmatex">\[\vert a\rangle\otimes\vert b\rangle = \left(\begin{matrix}a_1b_1\\a_1b_2\\a_2b_1\\a_2b_2\end{matrix}\right)\]</div>
+<p>This operation generalizes what we're doing in <span class="arithmatex">\(\mathbb{C}^2\)</span> to <span class="arithmatex">\(\mathbb{C}^{2^n}\)</span>. We defines the <strong>n-qubit computational basis</strong> as the set of all <span class="arithmatex">\(2^n\)</span> possible tensor products of <span class="arithmatex">\(\vert0\rangle\)</span> and <span class="arithmatex">\(\vert1\rangle\)</span>. We can also represent tensor product with the notation <span class="arithmatex">\(\vert x_1x_2\ldots x_n\rangle:=x_1\otimes x_2\otimes\ldots\otimes x_n\)</span>, that's why a <span class="arithmatex">\(n\)</span>-qubit state vector have <span class="arithmatex">\(2^n\)</span> entries. The 2-qubit computational basis, will be, for example</p>
+<div class="arithmatex">\[\begin{align*}\vert00\rangle &amp;= \left(\begin{matrix}1\cdot1\\1\cdot0\\0\cdot1\\0\cdot0\end{matrix}\right)=\left(\begin{matrix}1\\0\\0\\0\end{matrix}\right)\\
+\vert01\rangle &amp;= \left(\begin{matrix}1\cdot0\\1\cdot1\\0\cdot0\\0\cdot1\end{matrix}\right)=\left(\begin{matrix}0\\1\\0\\0\end{matrix}\right)\\
+\vert10\rangle &amp;= \left(\begin{matrix}0\cdot1\\0\cdot0\\1\cdot1\\1\cdot0\end{matrix}\right)=\left(\begin{matrix}0\\0\\1\\0\end{matrix}\right)\\
+\vert11\rangle &amp;= \left(\begin{matrix}0\cdot0\\0\cdot1\\1\cdot0\\1\cdot1\end{matrix}\right)=\left(\begin{matrix}0\\0\\0\\1\end{matrix}\right)\end{align*}\]</div>
+<p>Notice the relation between binary form in the final vector, and that this basis is pairwise orthogonal. A general 2-qubit state can then be written in the computational basis as:</p>
+<div class="arithmatex">\[\vert\psi\rangle = \alpha_0\vert00\rangle+\alpha_1\vert01\rangle+\alpha_2\vert10\rangle+\alpha_3\vert11\rangle\]</div>
+<p>State <span class="arithmatex">\(\vert\psi\rangle\)</span> is said to be in <strong>superposition</strong> of the states <span class="arithmatex">\(\vert00\rangle,\vert01\rangle,\vert10\rangle\)</span> and <span class="arithmatex">\(\vert11\rangle\)</span>. </p>
+<h2 id="measurements-and-born-rule">Measurements and Born Rule</h2>
+<p>Measuring a state in superposition is the way we can extract and read information about the quantum system. Quantum measurement collapses the state to one of the vectors of its orthogonal basis, with a given probability.</p>
+<p>From now on, consider <span class="arithmatex">\(N=2^n\)</span>.</p>
+<p>We can do a projective measure of n-qubit state <span class="arithmatex">\(\displaystyle\vert\psi\rangle=\sum_{x=0}^{N-1}\alpha_x\vert x\rangle\)</span> onto the orthogonal base <span class="arithmatex">\(\{\vert 0\rangle,\vert 1\rangle,\ldots\vert N-1\rangle\}\)</span>. Here, we are commiting an abuse of notation using <span class="arithmatex">\(\vert x\rangle\)</span> (x in base 10) to represent the state <span class="arithmatex">\(\vert00\ldots1\ldots0\rangle\)</span>, with the <span class="arithmatex">\((x+1)^{th}\)</span> entriy being equal 1, and the rest zero.</p>
+<p>After this procedure, the state will colapse to either one of the <span class="arithmatex">\(N\)</span> states from the basis, with probability of <span class="arithmatex">\(|\langle x\vert\psi\rangle|^2\)</span> of collapsing to <span class="arithmatex">\(x\)</span>. Thats's the so called <strong>Born Rule:</strong></p>
+<div class="arithmatex">\[\mathbb{P}(x)=|\langle x\vert\psi\rangle|^2\]</div>
+<p>In the case of <span class="arithmatex">\(\vert\psi\rangle\)</span> written in computational basis, <span class="arithmatex">\(\mathbb{P}(x)=|\alpha_x|^2\)</span>. Notice that, since <span class="arithmatex">\(\vert\psi\rangle\)</span> must be normalized, we'll have <span class="arithmatex">\(\displaystyle\sum_{x=0}^{N-1}\mathbb{P}(x) = \sum_{x=0}^{N-1}|\alpha_x|^2=1\)</span>, as expected.</p>
+<h2 id="the-bloch-sphere">The Bloch Sphere</h2>
+<p>We can write a single-qubit pure state as <span class="arithmatex">\(\vert\psi\rangle=\cos\frac \theta 2\vert0\rangle+e^{\varphi i}\sin\frac\theta2\vert1\rangle\)</span> where <span class="arithmatex">\(\phi\)</span> is the relative phase of the state, and <span class="arithmatex">\(\theta\)</span> describes the probability of measuring basis states, such that <span class="arithmatex">\(\mathbb{P}(\vert0\rangle)=\cos^2\frac\theta2\)</span> and <span class="arithmatex">\(\mathbb{P}(\vert1\rangle)=\sin^2\frac\theta2\)</span>.</p>
+<p>All these states can be represented geometrically in the Bloch Sphere, an origin centered unitaty radius sphere, with maps the above state <span class="arithmatex">\(\vert\psi\rangle\)</span> to the 3D point:</p>
+<div class="arithmatex">\[\vec r = \left(\begin{matrix}\sin\theta\cos\varphi\\\sin\theta\sin\varphi\\\cos\theta\end{matrix}\right)\]</div>
+<p>The image below <a href="https://www.researchgate.net/figure/color-online-Bloch-sphere-representation-of-the-Bloch-vector-v-for-qubits-d-2_fig3_316828699">(ResearchGate)</a>, shows the angle scheme and the axis poles states (read <span class="arithmatex">\(v\)</span> as <span class="arithmatex">\(\vert\psi\rangle\)</span>).</p>
+<p>We have saw before states <span class="arithmatex">\(\vert0\rangle\)</span> and <span class="arithmatex">\(\vert1\rangle\)</span>, but didn't mentioned <span class="arithmatex">\(\vert+\rangle,\vert-\rangle\)</span> nor <span class="arithmatex">\(\vert+i\rangle,\vert-i\rangle\)</span>. They are orthogonal pairs, with the formula shown in the image.</p>
+<p><img alt="" src="../images/blochsphere.png" /></p>
+<p>Let's map these 6 states to its Blch Sphere point.</p>
+<p>On Z-axis:</p>
+<ul>
+<li><span class="arithmatex">\(\vert0\rangle\)</span>: <span class="arithmatex">\(\theta=0\Rightarrow \vec r = (\begin{matrix}0 &amp;0 &amp;1\end{matrix})^T\)</span></li>
+<li><span class="arithmatex">\(\vert1\rangle\)</span>: <span class="arithmatex">\(\theta=\pi\Rightarrow \vec r = (\begin{matrix}0 &amp;0 &amp;-1\end{matrix})^T\)</span></li>
+</ul>
+<p>On X-axis:</p>
+<ul>
+<li>
+<p><span class="arithmatex">\(\vert+\rangle\)</span>: <span class="arithmatex">\(\theta=\pi/2,\varphi=0\Rightarrow \vec r = \left(\begin{matrix}\sin\frac\pi2 \cos0\\\sin\frac\pi2\sin0 \\\cos\frac\pi2\end{matrix}\right)=\left(\begin{matrix}1 \\0 \\0\end{matrix}\right)\)</span></p>
+</li>
+<li>
+<p><span class="arithmatex">\(\vert-\rangle\)</span>: <span class="arithmatex">\(\theta=\pi/2,\varphi=\pi\Rightarrow \vec r = \left(\begin{matrix}\sin\frac\pi2 \cos\pi\\\sin\frac\pi2\sin\pi \\\cos\frac\pi2\end{matrix}\right)=\left(\begin{matrix}-1 \\0 \\0\end{matrix}\right)\)</span></p>
+</li>
+</ul>
+<p>And analogously (we won't explicit the calculations) on the Y-axis:</p>
+<ul>
+<li><span class="arithmatex">\(\vert +i\rangle\Rightarrow \vec r=\left(\begin{matrix}0 \\1 \\0\end{matrix}\right)\)</span></li>
+<li><span class="arithmatex">\(\vert -i\rangle\Rightarrow \vec r =\left(\begin{matrix}0 \\-1 \\0\end{matrix}\right)\)</span></li>
+</ul>
+<p>Such a geometric intuition will be important in <a href="../qft/">Quantum Fourier Transform</a> section, specially of the states zero, one, plus and minus.</p>
+<h2 id="quantum-circuits">Quantum Circuits</h2>
+<p>Quantum Circuit models are blocks that carry out elementary computational operations, the so called <strong>gates</strong>.</p>
+<p>In quantum theory, a gate is a unitary operator, i.e, a matrix <span class="arithmatex">\(U\)</span> such that <span class="arithmatex">\(U^\dagger U = I\)</span>. See some examples of single-qubit gates:</p>
+<ul>
+<li><strong>(Bit flip)</strong> <span class="arithmatex">\(\sigma_x=\left(\begin{matrix}0&amp;1\\1&amp;0\end{matrix}\right)\)</span></li>
+</ul>
+<p>One can easyly show that <span class="arithmatex">\(\sigma_x\vert0\rangle = \vert1\rangle\)</span> and <span class="arithmatex">\(\sigma_x\vert1\rangle=\vert0\rangle\)</span>. In general, this gate performs a rotation around the x-axis by <span class="arithmatex">\(pi\)</span> radians.</p>
+<ul>
+<li><strong>(Phase flip)</strong> <span class="arithmatex">\(\sigma_z=\left(\begin{matrix}1&amp;0\\ 0&amp;-1\end{matrix}\right)\)</span>. </li>
+</ul>
+<p>It's easy to conclude that <span class="arithmatex">\(\sigma_z\vert+\rangle = \vert-\rangle\)</span> and <span class="arithmatex">\(\sigma_z\vert-\rangle = \vert+\rangle\)</span>. In general, this gate does a <span class="arithmatex">\(pi\)</span>-radians rotation around the z-axis.</p>
+<ul>
+<li><strong>(Hadamard gate)</strong> The most importante gate of this text:</li>
+</ul>
+<div class="arithmatex">\[H=\dfrac{1}{\sqrt2}\left(\begin{matrix}1&amp;0\\0&amp;-1\end{matrix}\right)\]</div>
+<p>With a rapid calculation we get:</p>
+<div class="arithmatex">\[\begin{align*}H\vert0\rangle&amp;=\vert+\rangle=\dfrac{1}{\sqrt2}(\vert0\rangle+\vert1\rangle)\\
+H\vert1\rangle&amp;=\vert-\rangle=\dfrac{1}{\sqrt2}(\vert0\rangle-\vert1\rangle)\end{align*}\]</div>
+<p>Notice that this gate created a superposition of states zero and one, with probability 1/2 of measuring each one! That's what makes this gate so important, and we'll use-it a lot in the next sections.</p>
+<h2 id="qiskit-introduction">Qiskit Introduction</h2>
+<p><a href="qiskit.org">Qiskit</a> is a Python library that makes it esier to design and test quantum circuits and algorithms. You can follow the website instrutions to install it on your computer. We are going to create a basic circuit that applies Hadamard gate on <span class="arithmatex">\(\vert0\rangle\)</span>, take the measurements and collapses to state zero or one.</p>
+<p>At first, let's import the required libraries:</p>
+<pre><code class="language-python">import warnings
+warnings.filterwarnings(&quot;ignore&quot;,category=DeprecationWarning)
+from qiskit import QuantumCircuit, assemble, Aer
+from qiskit.visualization import plot_histogram
+</code></pre>
+<p>Now lets build and display the circuit diagram:</p>
+<pre><code class="language-python">qc = QuantumCircuit(1) # Creates a single-qubit quantum circuit
+qc.initialize([1,0], 0)  # Define initial_state as |0&gt;
+qc.h(0) # Applid Hadamard Gate on 0th qubit (in this case, the only one)
+qc.measure_all() # Adds measurement to all qubits
+qc.draw()
+</code></pre>
+<pre style="word-wrap: normal;white-space: pre;background: #fff0;line-height: 1.1;font-family: &quot;Courier New&quot;,Courier,monospace">        ┌─────────────────┐┌───┐ ░ ┌─┐
+   q_0: ┤ Initialize(1,0) ├┤ H ├─░─┤M├
+        └─────────────────┘└───┘ ░ └╥┘
+meas: 1/════════════════════════════╩═
+                                    0 </pre>
+
+<p>We're going to run this circuit in a quantum simulator, which does not require acess to an actual quantum device:</p>
+<pre><code class="language-python">sim = Aer.get_backend('qasm_simulator')  # Defines the simulator
+qobj = assemble(qc,shots=1000) # Run 1000 shots of the circuit
+result = sim.run(qobj).result() #Collect results
+counts = result.get_counts() # Count results for plotting
+plot_histogram(counts)
+</code></pre>
+<p><img alt="png" src="../intro-quantum_files/intro-quantum_10_0.png" /></p>
+<p>As expected, around half of the measurements collapses to <span class="arithmatex">\(\vert0\rangle\)</span> and the other half to <span class="arithmatex">\(\vert1\rangle\)</span>. The below table shows the library versions, if you want to reproduce the same environment used in this text.</p>
+<pre><code class="language-python">import qiskit.tools.jupyter
+%qiskit_version_table
+</code></pre>
+<h3>Version Information</h3>
+<table><tr><th>Qiskit Software</th><th>Version</th></tr><tr><td><code>qiskit-terra</code></td><td>0.18.3</td></tr><tr><td><code>qiskit-aer</code></td><td>0.6.1</td></tr><tr><td><code>qiskit-ignis</code></td><td>0.4.0</td></tr><tr><td><code>qiskit-ibmq-provider</code></td><td>0.8.0</td></tr><tr><td><code>qiskit-aqua</code></td><td>0.7.5</td></tr><tr><td><code>qiskit</code></td><td>0.32.0</td></tr><tr><th>System information</th></tr><tr><td>Python</td><td>3.8.5 (default, Sep  3 2020, 21:29:08) [MSC v.1916 64 bit (AMD64)]</td></tr><tr><td>OS</td><td>Windows</td></tr><tr><td>CPUs</td><td>2</td></tr><tr><td>Memory (Gb)</td><td>15.86971664428711</td></tr><tr><td colspan='2'>Wed Dec 01 21:24:13 2021 Hora oficial do Brasil</td></tr></table>
                 
               
               
@@ -340,7 +565,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../shors-algorithm/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 2 - Shor&#39;s Algorithm" rel="prev">
+        <a href="../shors-algorithm/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 2 - Shor&#39;s Algorithm - Theory" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -349,7 +574,7 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              2 - Shor's Algorithm
+              2 - Shor's Algorithm - Theory
             </div>
           </div>
         </a>
