@@ -66,7 +66,8 @@ We'll need two atomic elements for building a circuit that implements QFT: the a
 
 We know that 
 
-$$H\vert0\rangle=\frac{1}{\sqrt2}(\vert0\rangle+\vert1\rangle)$$ and $$H\vert1\rangle=\frac{1}{\sqrt2}(\vert0\rangle-\vert1\rangle)$$
+\begin{align*}H\vert0\rangle&=\frac{1}{\sqrt2}(\vert0\rangle+\vert1\rangle)\text{ and }\\
+H\vert1\rangle&=\frac{1}{\sqrt2}(\vert0\rangle-\vert1\rangle)\end{align*}
 
 We can also write Hadamard operation acting on $x_k\in\{0,1\}$ as:
 

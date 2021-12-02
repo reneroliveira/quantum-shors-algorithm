@@ -26,16 +26,23 @@ In the below circuit, we'll then measure $2^ns/r$, but the only thing that matte
 
 The circuit is implemented below, we used the modular exponentiation implementation from Qiskit Textbook, and will treat as a black box, since we don't want to enter in quantum efficiency discussion of this process.
 
-
+<details>
+    <summary>Imports</summary>
 ```python
 # Imports
 import warnings
 warnings.filterwarnings("ignore",category=DeprecationWarning)
-from qiskit import QuantumCircuit, Aer
+from qiskit import QuantumCircuit, Aer, assemble, execute,transpile
 from qiskit.circuit.library import QFT
+import numpy as np
+from math import gcd
+from fractions import Fraction
 ```
+    </details>
+    
 
-
+<details>
+<summary>Modular Exponentiation</summary>
 ```python
 def a_x_mod15(a, x):
     if a not in [2,7,8,11,13]:
@@ -67,7 +74,7 @@ def modular_exponentiation(given_circuit, n, m, a):
         given_circuit.append(a_x_mod15(a, exponent), 
                      [x] + list(range(n, n+m)))
 ```
-
+</details>
 
 ```python
 def shor_circuit(a,n,m):
@@ -82,6 +89,7 @@ def shor_circuit(a,n,m):
     shor.h(range(n))
     # Applying sigma_x gate to last qubit
     shor.x(n+m-1)
+    shor.barrier()
     
     #Apply modular exponentiation gates
     modular_exponentiation(shor, n, m, a)
@@ -108,25 +116,25 @@ shor_example.draw()
 
 
 
-<pre style="word-wrap: normal;white-space: pre;background: #fff0;line-height: 1.1;font-family: &quot;Courier New&quot;,Courier,monospace">     ┌───┐                                                             ░ »
-q_0: ┤ H ├───────■─────────────────────────────────────────────────────░─»
-     ├───┤       │                                                     ░ »
-q_1: ┤ H ├───────┼──────────────■──────────────────────────────────────░─»
-     ├───┤       │              │                                      ░ »
-q_2: ┤ H ├───────┼──────────────┼──────────────■───────────────────────░─»
-     ├───┤       │              │              │                       ░ »
-q_3: ┤ H ├───────┼──────────────┼──────────────┼──────────────■────────░─»
-     └───┘┌──────┴──────┐┌──────┴──────┐┌──────┴──────┐┌──────┴──────┐ ░ »
-q_4: ─────┤0            ├┤0            ├┤0            ├┤0            ├─░─»
-          │             ││             ││             ││             │ ░ »
-q_5: ─────┤1            ├┤1            ├┤1            ├┤1            ├─░─»
-          │  2^1 mod 15 ││  2^2 mod 15 ││  2^4 mod 15 ││  2^8 mod 15 │ ░ »
-q_6: ─────┤2            ├┤2            ├┤2            ├┤2            ├─░─»
-     ┌───┐│             ││             ││             ││             │ ░ »
-q_7: ┤ X ├┤3            ├┤3            ├┤3            ├┤3            ├─░─»
-     └───┘└─────────────┘└─────────────┘└─────────────┘└─────────────┘ ░ »
-c: 4/════════════════════════════════════════════════════════════════════»
-                                                                         »
+<pre style="word-wrap: normal;white-space: pre;background: #fff0;line-height: 1.1;font-family: &quot;Courier New&quot;,Courier,monospace">     ┌───┐ ░                                                              ░ »
+q_0: ┤ H ├─░────────■─────────────────────────────────────────────────────░─»
+     ├───┤ ░        │                                                     ░ »
+q_1: ┤ H ├─░────────┼──────────────■──────────────────────────────────────░─»
+     ├───┤ ░        │              │                                      ░ »
+q_2: ┤ H ├─░────────┼──────────────┼──────────────■───────────────────────░─»
+     ├───┤ ░        │              │              │                       ░ »
+q_3: ┤ H ├─░────────┼──────────────┼──────────────┼──────────────■────────░─»
+     └───┘ ░ ┌──────┴──────┐┌──────┴──────┐┌──────┴──────┐┌──────┴──────┐ ░ »
+q_4: ──────░─┤0            ├┤0            ├┤0            ├┤0            ├─░─»
+           ░ │             ││             ││             ││             │ ░ »
+q_5: ──────░─┤1            ├┤1            ├┤1            ├┤1            ├─░─»
+           ░ │  2^1 mod 15 ││  2^2 mod 15 ││  2^4 mod 15 ││  2^8 mod 15 │ ░ »
+q_6: ──────░─┤2            ├┤2            ├┤2            ├┤2            ├─░─»
+     ┌───┐ ░ │             ││             ││             ││             │ ░ »
+q_7: ┤ X ├─░─┤3            ├┤3            ├┤3            ├┤3            ├─░─»
+     └───┘ ░ └─────────────┘└─────────────┘└─────────────┘└─────────────┘ ░ »
+c: 4/═══════════════════════════════════════════════════════════════════════»
+                                                                            »
 «     ┌───────┐┌─┐         
 «q_0: ┤0      ├┤M├─────────
 «     │       │└╥┘┌─┐      
@@ -149,4 +157,57 @@ c: 4/═════════════════════════
 
 
 
-With the circuit implemented, we can follow with further pre-processing and post-processing of Shor's Algorithm
+With the circuit implemented, we can follow with further pre-processing and post-processing of Shor's Algorithm. The code below implements the logic of pseudocode in [Section 2](shors-algorithm.md) putting everything we saw together. The code is commented to help interpretation.
+
+
+```python
+# Defining the simulator:
+backend = Aer.get_backend('qasm_simulator') 
+
+def factor(N=15,backend=backend):
+    found_factors = False
+    n = len(bin(N))-2
+    m = n
+    valid_a = [2,7,8,11,13]
+    while found_factors == False:
+        # STEP 1: Choose a randomly in valid a's
+        if len(valid_a)==0:
+            break
+        a = np.random.choice(valid_a)
+        print(f"Trying a = {a}")
+
+        r = 1 #defining a wrong r
+        
+        # STEP 2: Find period r
+        while a**r%N != 1: #Adding loop because QPE + continued fractions can find wrong r
+            ## Substep 2.1: Find phase s/r
+            #Defining Shor's Circuits (QPE):
+            qc = shor_circuit(a,n,m) 
+            #Doing the measurement (binary):
+            measure = execute(qc, backend=backend, shots=1,memory=True).result().get_memory()[0]
+            #Converting to decimal base:
+            measure = int(measure,2)
+            phase = measure/(2**(n-1))
+            ## Substep 2.2: Find denominator r (Continued fraction algorithm)
+            r = Fraction(phase).limit_denominator(N).denominator
+            
+        # STEPS 3 and 4: check if r is even and a^(r/2) != -1 (mod N)
+        if r%2==0 and (a**(r/2)+1)%N!=0:
+            #STEP 5: Compute factors
+            factors = [gcd(a**(r//2)-1,N),gcd(a**(r//2)+1,N)]
+            print(f" --- order r = {r}")
+            if factors[0] not in [1,N]: # Check to see if factor is a non trivial one
+                found_factors = True
+                print(f" --- Sucessfully found factors {factors}")
+            else:
+                print(f" --- Trivial factors found: [1,15]")
+        if found_factors == False:
+            print(f" --- a={a} failed!")
+        valid_a.remove(a)
+factor()
+```
+
+    Trying a = 7
+     --- order r = 4
+     --- Sucessfully found factors [3, 5]
+    

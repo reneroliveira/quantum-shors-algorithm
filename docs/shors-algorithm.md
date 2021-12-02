@@ -2,12 +2,6 @@
 
 <!-- Description of the algorithm, mathematical statements and proofs. -->
 
-
-```python
-import markdown
-md = markdown.Markdown(extensions=['pymdownx.arithmatex'])
-```
-
 ## Pseudocode
 
 Getting straight to the point, here's how Shor's algorithm works to factor a prime product $N=pq$:

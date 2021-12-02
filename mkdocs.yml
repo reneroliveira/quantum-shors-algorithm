@@ -11,6 +11,8 @@ nav:
 theme: material
 
 markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
   - pymdownx.arithmatex:
       generic: true
 
