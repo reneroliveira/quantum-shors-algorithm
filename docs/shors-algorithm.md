@@ -54,7 +54,8 @@ We'll prove a more general theorem:
 > 
 > $$\mathbb{P}\left(\text{r is even and }a^{r/2}+1\not\equiv0~(mod~N)\right )\geq1-\dfrac{1}{2^{m-1}}$$
 > 
-> Then, in the case where $N=pq$ ($m=2$), the probability of success is greater or equal $1/2$.
+
+Then, in the case where $N=pq$ ($m=2$), the probability of success is greater or equal $1/2$.
 
 At first, consider $N$ being an odd prime number (because even primes won't appear in encryption applications). We'll have $|G_N|=\varphi(N)=N-1$, an even number, so consider $2^d$ the large power of 2 diving $N-1$. As said before, it can be show that $G_N$ is a cyclic group under modulo $N$ multiplication. So there is a generator $g$ such that any element from $G_N$ can be written as $g^t~(mod~N)$. If $r$ is the order of $g^t$, then $g^{tr}\equiv1~(mod~N)$.
 

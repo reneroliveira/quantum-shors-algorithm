@@ -1,10 +1,10 @@
 site_name: Shor's Algorithm and Quantum Computing
 nav:
 - 1 - Introduction: index.md
-- 2 - Shor's Algorithm: shors-algorithm.md
+- 2 - Shor's Algorithm - Theory: shors-algorithm.md
 - 3 - Quantum Computing Preliminaries: intro-quantum.md
 - 4 - Quantum Fourier Transform: qft.md
-- 5 - Quantum Shor's Algorithm: quantum-shors.md
+- 5 - Shor's Algorithm - Implementation: quantum-shors.md
 - 6 - Further reading: further.md
 - 7 - References: bib.md
 
